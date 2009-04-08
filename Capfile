@@ -9,7 +9,7 @@ set :deploy_via, :remote_cache
 set :user, "app"
 set :use_sudo, false
 
-role :app, "li82-54.members.linode.com"
+role :app, "pinkyurl.com"
 
 namespace :deploy do
   task :restart, :roles => :app do
