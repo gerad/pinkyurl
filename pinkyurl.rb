@@ -12,8 +12,7 @@ get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
   file =  base + '.png'
 
   unless File.exists?(file)
-    options = "--user-agent='Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; en-us) AppleWebKit/530.5+ (KHTML, like Gecko) Version/4.0 Safari/528.16'"
-    `xvfb-run --server-args="-screen 0, 1024x768x24" CutyCapt --url=http://#{url} --out=#{file} #{options}`
+    `xvfb-run --server-args="-screen 0, 1024x768x24" CutyCapt --url=http://#{url} --out=#{file}`
   end
 
   if crop
