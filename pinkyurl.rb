@@ -16,16 +16,18 @@ get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
   end
 
   if crop
-    ImageScience.with_image file do |img|
-      w, h = img.width, img.height
-      l, t, r, b = 0, 0, w, h
+    file = base + "_#{crop}.png"
+    unless File.exists?(file)
+      ImageScience.with_image file do |img|
+        w, h = img.width, img.height
+        l, t, r, b = 0, 0, w, h
 
-      t, b = 0, w if h > w
+        t, b = 0, w if h > w
 
-      img.with_crop l, t, r, b do |cropped|
-        cropped.thumbnail crop do |thumb|
-          file = base + "_#{crop}.png"
-          thumb.save file
+        img.with_crop l, t, r, b do |cropped|
+          cropped.thumbnail crop do |thumb|
+            thumb.save file
+          end
         end
       end
     end
