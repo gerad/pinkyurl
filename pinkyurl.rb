@@ -30,5 +30,6 @@ get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
     end
   end
 
+  content_type 'image/png'
   send_file file
 end
