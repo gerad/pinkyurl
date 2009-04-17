@@ -8,10 +8,10 @@ get '/' do
 end
 
 get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
-  file = "public/url/#{url}.png"
+  file = "public/url/#{url}"
 
   FileUtils.mkdir_p File.dirname(file)
-  `xvfb-run -a --server-args="-screen 0, 1024x768x24" CutyCapt --url=http://#{url} --out=#{file}`
+  `xvfb-run -a CutyCapt --out-format=png --url=http://#{url} --out=#{file}`
 
   if crop
     ImageScience.with_image file do |img|
@@ -22,7 +22,7 @@ get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
 
       img.with_crop l, t, r, b do |cropped|
         cropped.thumbnail crop do |thumb|
-          file = "public/crop/#{crop}/url/#{url}.png"
+          file = "public/crop/#{crop}/url/#{url}"
           FileUtils.mkdir_p File.dirname(file)
           thumb.save file
         end
