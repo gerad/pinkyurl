@@ -11,7 +11,7 @@ get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
   file = "public/url/#{url}"
 
   FileUtils.mkdir_p File.dirname(file)
-  `xvfb-run -a CutyCapt --delay=1000 --out-format=png --url=http://#{url} --out=#{file}`
+  `xvfb-run -a --server-args="-screen 0, 800x600x24" CutyCapt --delay=1000 --out-format=png --url=http://#{url} --out=#{file}`
 
   if crop
     ImageScience.with_image file do |img|
