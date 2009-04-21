@@ -9,9 +9,12 @@ end
 
 get %r{(/crop/(\d+))?/url/(.*)} do |x, crop, url|
   file = "public/url/#{url}"
+  rurl = url + '?' + params.reject { |k, v| k == 'captures' }.map do |k, v|
+    "#{k}=#{v}"
+  end.join('&')
 
   FileUtils.mkdir_p File.dirname(file)
-  `xvfb-run -a --server-args="-screen 0, 800x600x24" CutyCapt --delay=1000 --out-format=png --url=http://#{url} --out=#{file}`
+  `xvfb-run -a --server-args="-screen 0, 800x600x24" CutyCapt --delay=1000 --out-format=png --url=http://#{rurl} --out=#{file}`
 
   if crop
     ImageScience.with_image file do |img|
