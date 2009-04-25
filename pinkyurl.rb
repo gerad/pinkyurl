@@ -28,7 +28,12 @@ class Cache
 end
 
 def cutycapt url, file
-  `xvfb-run -a --server-args="-screen 0, 800x600x24" CutyCapt --delay=1000 --out-format=png --url=#{url} --out=#{file}`
+  cmd = "CutyCapt --delay=1000 --out-format=png --url=#{url} --out=#{file}"
+  if ENV['DISPLAY']
+    `#{cmd}`
+  else
+    `xvfb-run -a --server-args="-screen 0, 800x600x24" #{cmd}`
+  end
 end
 
 def crop file, size
