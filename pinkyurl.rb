@@ -4,24 +4,32 @@ require 'rubygems'
 require 'sinatra'
 require 'image_science'
 require 'aws/s3'
+require 'memcache'
 
 class Cache
   def initialize
-    config = YAML.load_file 'aws.yml'  rescue {}
+    config = YAML.load_file 'aws.yml'
     AWS::S3::Base.establish_connection! config
     AWS::S3::Bucket.create 'pinkyurl'
+
+    config = YAML.load_file 'memcache.yml' rescue {:servers => 'localhost:11211'}
+    @memcache = MemCache.new config[:servers]
   end
 
   def put file
     key = Digest::SHA1.hexdigest file
     AWS::S3::S3Object.store key, open(file), 'pinkyurl',
       :content_type => 'image/png', :access => :public_read
+    @memcache.set key, 'https://s3.amazonaws.com' + obj.path
   end
 
   def get file
     key = Digest::SHA1.hexdigest file
-    obj = AWS::S3::S3Object.find key, 'pinkyurl'
-    "https://s3.amazonaws.com" + obj.path
+    unless r = @memcache.get(key)
+      obj = AWS::S3::S3Object.find key, 'pinkyurl'
+      @memcache.set key, r = 'https://s3.amazonaws.com' + obj.path
+    end
+    r
   rescue Exception => e
     nil
   end
