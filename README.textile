@@ -4,14 +4,5 @@ Make thumbnails out of urls.
 
 h2. TODO
 
-* max height cropping
-
-* default caching
-  * always serve from cache
-  * kick off expiration check on hit
-    * max 1 per 5 minutes
-    * last-modified, etag, 304 
-  * /expire/id to force expiration
-
-* output filename?
-* key?
+* delete old files
+* expire urls explicitly
