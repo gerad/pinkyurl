@@ -77,8 +77,7 @@ get '/i' do
   file = "public/cache/#{params[:crop]}/#{CGI.escape url}"
 
   if cached = @@cache.get(file)
-    redirect cached
-    return
+    halt redirect(cached)
   end
 
   unless File.exists?(file)
