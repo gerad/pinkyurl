@@ -8,11 +8,11 @@ require 'memcache'
 
 class Cache
   def initialize
-    config = YAML.load_file 'aws.yml'
+    config = YAML.load_file 'config/aws.yml'
     AWS::S3::Base.establish_connection! config
     AWS::S3::Bucket.create 'pinkyurl'
 
-    config = YAML.load_file 'memcache.yml' rescue {:servers => 'localhost:11211'}
+    config = YAML.load_file 'config/memcache.yml' rescue {:servers => 'localhost:11211'}
     @memcache = MemCache.new config[:servers]
   end
 
