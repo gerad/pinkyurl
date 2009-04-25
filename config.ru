@@ -9,5 +9,7 @@ log = File.new("sinatra.log", "a")
 $stdout.reopen(log)
 $stderr.reopen(log)
 
+ENV['DISPLAY'] = ':420'
+
 require 'pinkyurl'
 run Sinatra::Application
