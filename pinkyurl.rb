@@ -12,15 +12,17 @@ class Cache
     AWS::S3::Base.establish_connection! config
     AWS::S3::Bucket.create 'pinkyurl'
 
-    config = YAML.load_file 'config/memcache.yml' rescue {:servers => 'localhost:11211'}
-    @memcache = MemCache.new config[:servers]
+    config = YAML.load_file 'config/memcache.yml' rescue nil
+    @memcache = MemCache.new config[:servers] || 'localhost:11211'
   end
 
   def put file
-    key = Digest::SHA1.hexdigest file
-    AWS::S3::S3Object.store key, open(file), 'pinkyurl',
-      :content_type => 'image/png', :access => :public_read
-    @memcache.set key, 'https://s3.amazonaws.com' + obj.path
+    Thread.new do
+      key = Digest::SHA1.hexdigest file
+      AWS::S3::S3Object.store key, open(file), 'pinkyurl',
+        :content_type => 'image/png', :access => :public_read
+      @memcache.set key, 'https://s3.amazonaws.com' + obj.path
+    end
   end
 
   def get file
@@ -31,6 +33,7 @@ class Cache
     end
     r
   rescue Exception => e
+    warn e
     nil
   end
 end
