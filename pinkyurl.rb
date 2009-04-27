@@ -21,15 +21,16 @@ class Cache
       key = Digest::SHA1.hexdigest file
       AWS::S3::S3Object.store key, open(file), 'pinkyurl',
         :content_type => 'image/png', :access => :public_read
-      @memcache.set key, 'https://s3.amazonaws.com' + obj.path
+      @memcache.set file, 'https://s3.amazonaws.com' + obj.path
     end
   end
 
   def get file
-    key = Digest::SHA1.hexdigest file
-    unless r = @memcache.get(key)
+    r = @memcache.get file
+    unless r
+      key = Digest::SHA1.hexdigest file
       obj = AWS::S3::S3Object.find key, 'pinkyurl'
-      @memcache.set key, r = 'https://s3.amazonaws.com' + obj.path
+      @memcache.set file, r = 'https://s3.amazonaws.com' + obj.path
     end
     r
   rescue Exception => e
