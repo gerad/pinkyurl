@@ -89,7 +89,9 @@ end
 
 get '/i' do
   url = params[:url]
-  file = "public/cache/#{params[:crop]}/#{CGI.escape url}"
+  halt 'no url'  unless url =~ /\S/
+
+  file = "public/cache/#{params[:crop] || 'uncropped'}/#{CGI.escape url}"
 
   if params[:expire]
     @@cache.expire file
