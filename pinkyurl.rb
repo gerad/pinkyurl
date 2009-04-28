@@ -1,3 +1,4 @@
+require 'uri'
 require 'cgi'
 require 'digest/sha1'
 require 'rubygems'
@@ -12,31 +13,31 @@ class Cache
   def initialize
     config = YAML.load_file 'config/aws.yml'
     AWS::S3::Base.establish_connection! config
-    AWS::S3::Bucket.create @@bucket
 
     config = YAML.load_file 'config/memcache.yml' rescue nil
     @memcache = MemCache.new config[:servers] || 'localhost:11211'
   end
 
-  def expire file
+  def expire file, host
     @memcache.delete file
-    AWS::S3::S3Object.delete key(file), @@bucket
+    AWS::S3::S3Object.delete key(file), bucket(host)
   rescue Exception => e
     warn e
   end
 
-  def put file
+  def put file, host
     Thread.new do
-      AWS::S3::S3Object.store key(file), open(file), @@bucket,
+      AWS::S3::Bucket.create bucket(host)
+      AWS::S3::S3Object.store key(file), open(file), bucket(host),
         :content_type => 'image/png', :access => :public_read
       @memcache.set file, 'https://s3.amazonaws.com' + obj.path
     end
   end
 
-  def get file
+  def get file, host
     r = @memcache.get file
     unless r
-      obj = AWS::S3::S3Object.find key(file), @@bucket
+      obj = AWS::S3::S3Object.find key(file), bucket(host)
       @memcache.set file, r = 'https://s3.amazonaws.com' + obj.path
     end
     r
@@ -48,6 +49,10 @@ class Cache
   private
     def key file
       Digest::SHA1.hexdigest file
+    end
+
+    def bucket host
+      @@bucket + '-' + host
     end
 end
 
@@ -89,13 +94,14 @@ end
 
 get '/i' do
   url = params[:url]
-  halt 'no url'  unless url =~ /\S/
+  host = (URI.parse(url).host rescue nil)
+  halt 'no url'  unless host
 
   file = "public/cache/#{params[:crop] || 'uncropped'}/#{CGI.escape url}"
 
   if params[:expire]
-    @@cache.expire file
-  elsif cached = @@cache.get(file)
+    @@cache.expire file, host
+  elsif cached = @@cache.get(file, host)
     halt redirect(cached)
   end
 
@@ -105,6 +111,6 @@ get '/i' do
     crop file, params[:crop]  if params[:crop]
   end
 
-  @@cache.put file
+  @@cache.put file, host
   send_file file, :type => 'image/png'
 end
