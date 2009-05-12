@@ -56,6 +56,12 @@ class Cache
     end
 end
 
+class DisabledCache < Cache
+  def expire file, host; end
+  def put file, host; end
+  def get file, host; end
+end
+
 def cutycapt url, file
   url = CGI.unescape url  # qt expects no %-escaping
                           # http://doc.trolltech.com/4.5/qurl.html#QUrl
@@ -83,6 +89,10 @@ def crop file, size
 end
 
 configure do
+  @@cache = DisabledCache.new
+end
+
+configure :production do
   @@cache = Cache.new
 end
 
