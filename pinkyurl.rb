@@ -74,14 +74,19 @@ def cutycapt url, file
 end
 
 def crop file, size
+  width, height = size.split 'x'
   ImageScience.with_image file do |img|
     w, h = img.width, img.height
     l, t, r, b = 0, 0, w, h
 
-    t, b = 0, w if h > w
+    if height
+      b = w.to_f / width.to_f * height.to_f
+    else
+      height = width.to_f / w * h
+    end
 
     img.with_crop l, t, r, b do |cropped|
-      cropped.thumbnail size do |thumb|
+      cropped.resize width.to_i, height.to_i do |thumb|
         thumb.save file
       end
     end
