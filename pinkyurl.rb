@@ -65,7 +65,7 @@ end
 def cutycapt url, file
   url = CGI.unescape url  # qt expects no %-escaping
                           # http://doc.trolltech.com/4.5/qurl.html#QUrl
-  cmd = "CutyCapt --delay=1000 --out-format=png --url=#{url} --out=#{file}"
+  cmd = "CutyCapt --delay=1000 --out-format=png --url='#{url}' --out='#{file}'"
   if ENV['DISPLAY']
     `#{cmd}`
   else
