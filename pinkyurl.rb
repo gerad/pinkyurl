@@ -19,26 +19,29 @@ class Cache
   end
 
   def expire file, host
-    @memcache.delete file
-    AWS::S3::S3Object.delete key(file), bucket(host)
+    k = key file
+    @memcache.delete k
+    AWS::S3::S3Object.delete k, bucket(host)
   rescue Exception => e
     warn e
   end
 
   def put file, host
     Thread.new do
+      k = key file
       AWS::S3::Bucket.create bucket(host)
-      AWS::S3::S3Object.store key(file), open(file), bucket(host),
+      AWS::S3::S3Object.store k, open(file), bucket(host),
         :content_type => 'image/png', :access => :public_read
-      @memcache.set file, 'https://s3.amazonaws.com' + obj.path
+      @memcache.set k, 'https://s3.amazonaws.com' + obj.path
     end
   end
 
   def get file, host
-    r = @memcache.get file
+    k = key file
+    r = @memcache.get k
     unless r
-      obj = AWS::S3::S3Object.find key(file), bucket(host)
-      @memcache.set file, r = 'https://s3.amazonaws.com' + obj.path
+      obj = AWS::S3::S3Object.find k, bucket(host)
+      @memcache.set k, r = 'https://s3.amazonaws.com' + obj.path
     end
     r
   rescue Exception => e
