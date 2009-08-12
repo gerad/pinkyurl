@@ -76,9 +76,9 @@ def cutycapt url, file
   end
 end
 
-def crop file, size
+def crop input, output, size
   width, height = size.split 'x'
-  ImageScience.with_image file do |img|
+  ImageScience.with_image input do |img|
     w, h = img.width, img.height
     l, t, r, b = 0, 0, w, h
 
@@ -90,7 +90,7 @@ def crop file, size
 
     img.with_crop l, t, r, b do |cropped|
       cropped.resize width.to_i, height.to_i do |thumb|
-        thumb.save file
+        thumb.save output
       end
     end
   end
@@ -105,9 +105,13 @@ configure :production do
 end
 
 get '/' do
-  url = CGI.escape 'http://www.google.com'
-  href = 'i?url=' + url + '&crop=200'
-  "go to <a href=\"#{href}\">#{href}</a>"
+  require 'haml'
+  haml :index
+end
+
+get '/stylesheet.css' do
+  require 'sass'
+  sass :stylesheet
 end
 
 get '/i' do
@@ -123,12 +127,41 @@ get '/i' do
     halt redirect(cached)
   end
 
-  if !File.exists?(file) || params[:expire]
+  uncropped = "public/cache/uncropped/#{CGI.escape url}"
+  if !File.exists?(uncropped) || params[:expire]
+    FileUtils.mkdir_p File.dirname(uncropped)
+    cutycapt url, uncropped
+  end
+
+  if params[:crop] && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)
-    cutycapt url, file
-    crop file, params[:crop]  if params[:crop]
+    crop uncropped, file, params[:crop]
   end
 
   @@cache.put file, host
   send_file file, :type => 'image/png'
 end
+
+__END__
+@@stylesheet
+body, input
+  :font-size 32px
+
+form
+  :text-align center
+  :margin-top 3em
+
+input[type=submit]
+  :border solid 1px gray
+  :-webkit-border-radius 5px
+  :-moz-border-radius 5px
+
+@@ index
+%html
+  %head
+    %title= 'pinkyurl'
+    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
+  %body
+    %form{:action => '/i', :method => 'get'}
+      %input{:name => 'url', :value => 'http://www.google.com'}
+      %input{:type => 'submit', :value => 'Get'}
