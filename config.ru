@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'sinatra'
+require 'pinkyurl'
 
 Sinatra::Application.set :run, false
 Sinatra::Application.set :environment, ENV['RACK_ENV']
@@ -11,5 +11,4 @@ $stderr.reopen(log)
 
 ENV['DISPLAY'] = ':420'
 
-require 'pinkyurl'
 run Sinatra::Application

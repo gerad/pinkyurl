@@ -7,8 +7,12 @@ require 'image_science'
 require 'aws/s3'
 require 'memcache'
 
+#
+# cache
+#
 class Cache
   @@bucket = 'pinkyurl'
+  attr_reader :memcache
 
   def initialize
     config = YAML.load_file 'config/aws.yml'
@@ -60,11 +64,27 @@ class Cache
 end
 
 class DisabledCache < Cache
+  class DisabledMemCache
+    def get k; end
+    def set k, v; end
+  end
+  def initialize; @memcache = DisabledMemCache.new end
   def expire file, host; end
   def put file, host; end
   def get file, host; end
 end
 
+configure do
+  @@cache = DisabledCache.new
+end
+
+configure :production do
+  @@cache = Cache.new
+end
+
+#
+# helpers
+#
 def cutycapt url, file
   url = CGI.unescape url  # qt expects no %-escaping
                           # http://doc.trolltech.com/4.5/qurl.html#QUrl
@@ -73,6 +93,18 @@ def cutycapt url, file
     `#{cmd}`
   else
     `xvfb-run -a --server-args="-screen 0, 800x600x24" #{cmd}`
+  end
+end
+
+def cutycapt_with_cache url, file, force=nil
+  if force || !File.exists?(file)
+    FileUtils.mkdir_p File.dirname(file)
+    if !force && cached = @@cache.memcache.get(file)
+      File.open file, 'w' do |f| f.write cached end
+    else
+      cutycapt url, file
+      @@cache.memcache.set file, File.read(file)
+    end
   end
 end
 
@@ -96,14 +128,9 @@ def crop input, output, size
   end
 end
 
-configure do
-  @@cache = DisabledCache.new
-end
-
-configure :production do
-  @@cache = Cache.new
-end
-
+#
+# routes/actions
+#
 get '/' do
   require 'haml'
   haml :index
@@ -117,9 +144,10 @@ end
 get '/i' do
   url = params[:url]
   host = (URI.parse(url).host rescue nil)
-  halt 'no url'  unless host
+  halt 'invalid url'  unless host
 
-  file = "public/cache/#{params[:crop] || 'uncropped'}/#{CGI.escape url}"
+  crop = params[:crop]; crop = nil  if crop.nil? || crop == ''
+  file = "public/cache/#{crop || 'uncropped'}/#{CGI.escape url}"
 
   if params[:expire]
     @@cache.expire file, host
@@ -128,33 +156,38 @@ get '/i' do
   end
 
   uncropped = "public/cache/uncropped/#{CGI.escape url}"
-  if !File.exists?(uncropped) || params[:expire]
-    FileUtils.mkdir_p File.dirname(uncropped)
-    cutycapt url, uncropped
-  end
+  cutycapt_with_cache url, uncropped, params[:expire]
 
-  if params[:crop] && (!File.exists?(file) || params[:expire])
+  if crop && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)
-    crop uncropped, file, params[:crop]
+    crop uncropped, file, crop
   end
 
   @@cache.put file, host
   send_file file, :type => 'image/png'
 end
 
+#
+# views
+#
 __END__
 @@stylesheet
 body, input
-  :font-size 32px
-
-form
-  :text-align center
-  :margin-top 3em
-
+  :font-size 32pt
+  .minor, .minor input
+    :font-size 12pt
 input[type=submit]
   :border solid 1px gray
   :-webkit-border-radius 5px
   :-moz-border-radius 5px
+
+form
+  :text-align center
+  :margin-top 3em
+  input#url
+    :width 20ex
+  input#crop
+    :width 5ex
 
 @@ index
 %html
@@ -163,5 +196,12 @@ input[type=submit]
     %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
   %body
     %form{:action => '/i', :method => 'get'}
-      %input{:name => 'url', :value => 'http://www.google.com'}
-      %input{:type => 'submit', :value => 'Get'}
+      %p
+        %label{:for => 'url'}= 'url'
+        %input{:name => 'url', :id => 'url', :value => 'http://www.google.com'}
+        %input{:type => 'submit', :value => 'Go'}
+      %p.minor
+        %label{:for => 'crop'}= 'crop'
+        %input{:name => 'crop', :id => 'crop'}
+        %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+        %label{:for => 'expire'}= 'expire'
