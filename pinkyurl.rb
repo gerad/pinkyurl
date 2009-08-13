@@ -115,7 +115,7 @@ def crop input, output, size
     l, t, r, b = 0, 0, w, h
 
     if height
-      b = w.to_f / width.to_f * height.to_f
+      b = (w.to_f / width.to_f * height.to_f).to_i
     else
       height = width.to_f / w * h
     end
