@@ -53,11 +53,11 @@ class Cache
     nil
   end
 
-  private
-    def key file
-      Digest::SHA1.hexdigest file
-    end
+  def key file
+    Digest::SHA1.hexdigest file
+  end
 
+  private
     def bucket host
       @@bucket + '-' + host
     end
@@ -99,11 +99,12 @@ end
 def cutycapt_with_cache url, file, force=nil
   if force || !File.exists?(file)
     FileUtils.mkdir_p File.dirname(file)
-    if !force && cached = @@cache.memcache.get(file)
+    key = @@cache.key "cutycapt-#{file}"
+    if !force && cached = @@cache.memcache.get(key)
       File.open file, 'w' do |f| f.write cached end
     else
       cutycapt url, file
-      @@cache.memcache.set file, File.read(file)
+      @@cache.memcache.set key, File.read(file)
     end
   end
 end
@@ -116,6 +117,7 @@ def crop input, output, size
 
     if height
       b = (w.to_f / width.to_f * height.to_f).to_i
+      b = h  if b > h
     else
       height = width.to_f / w * h
     end
