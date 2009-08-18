@@ -146,7 +146,7 @@ end
 get '/i' do
   url = params[:url]
   host = (URI.parse(url).host rescue nil)
-  halt 'invalid url'  unless host
+  halt 'invalid url'  unless host && host != 'localhost'
 
   crop = params[:crop]; crop = nil  if crop.nil? || crop == ''
   file = "public/cache/#{crop || 'uncropped'}/#{CGI.escape url}"
