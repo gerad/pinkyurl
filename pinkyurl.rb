@@ -145,11 +145,12 @@ end
 
 get '/i' do
   url = params[:url]
+  sha1_url = Digest::SHA1.hexdigest url
   host = (URI.parse(url).host rescue nil)
   halt 'invalid url'  unless host && host != 'localhost'
 
   crop = params[:crop]; crop = nil  if crop.nil? || crop == ''
-  file = "public/cache/#{crop || 'uncropped'}/#{CGI.escape url}"
+  file = "public/cache/#{crop || 'uncropped'}/#{sha1_url}"
 
   if params[:expire]
     @@cache.expire file, host
@@ -157,7 +158,7 @@ get '/i' do
     halt redirect(cached)
   end
 
-  uncropped = "public/cache/uncropped/#{CGI.escape url}"
+  uncropped = "public/cache/uncropped/#{sha1_url}"
   cutycapt_with_cache url, uncropped, params[:expire]
 
   if crop && (!File.exists?(file) || params[:expire])
