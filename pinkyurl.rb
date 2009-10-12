@@ -31,12 +31,17 @@ class Cache
   end
 
   def put file, host
-    Thread.new do
-      k = key file
-      AWS::S3::Bucket.create bucket(host)
-      AWS::S3::S3Object.store k, open(file), bucket(host),
-        :content_type => 'image/png', :access => :public_read
-      @memcache.set k, 'https://s3.amazonaws.com' + obj.path
+    Thread.new { _put file, host }
+  end
+
+  def _put file, host, content_type = 'image/png'
+    k = key file
+    AWS::S3::Bucket.create bucket(host)
+    AWS::S3::S3Object.store k, open(file), bucket(host),
+      :content_type => content_type, :access => :public_read
+    obj = AWS::S3::S3Object.find k, bucket(host)  # TODO: skip this extra find?
+    returning 'https://s3.amazonaws.com' + obj.path do |r|
+      @memcache.set k, r
     end
   end
 
@@ -70,7 +75,7 @@ class DisabledCache < Cache
   end
   def initialize; @memcache = DisabledMemCache.new end
   def expire file, host; end
-  def put file, host; end
+  def _put file, host; end
   def get file, host; end
 end
 
@@ -168,6 +173,16 @@ get '/i' do
 
   @@cache.put file, host
   send_file file, :type => 'image/png'
+end
+
+post '/i' do
+  uploaded = params[:file]
+  # TODO: using tempfile.path isn't secure enough
+  file, host = uploaded[:tempfile].path, 'POST'
+  headers['Location'] = @@cache._put file, host, uploaded[:type]
+
+  status 201
+  'Created'
 end
 
 #
