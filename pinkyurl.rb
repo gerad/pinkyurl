@@ -205,7 +205,7 @@ input[type=submit]
 form
   :text-align center
   :margin-top 3em
-  input#url
+  input#url, input#file
     :width 20ex
   input#crop
     :width 5ex
