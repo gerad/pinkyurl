@@ -6,6 +6,7 @@ require 'sinatra'
 require 'image_science'
 require 'aws/s3'
 require 'memcache'
+require 'json'
 
 #
 # cache
@@ -75,7 +76,7 @@ class DisabledCache < Cache
   end
   def initialize; @memcache = DisabledMemCache.new end
   def expire file, host; end
-  def _put file, host; end
+  def _put file, host, content_type = 'image/png'; file end
   def get file, host; end
 end
 
@@ -182,7 +183,9 @@ post '/i' do
   headers['Location'] = @@cache._put file, host, uploaded[:type]
 
   status 201
-  'Created'
+  ImageScience.with_image file do |img|
+    {"size" => {"width" => img.width, "height" => img.height}}.to_json
+  end rescue "{}"
 end
 
 #
@@ -223,3 +226,8 @@ form
         %input{:name => 'crop', :id => 'crop'}
         %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
         %label{:for => 'expire'}= 'expire'
+    %form{:action => '/i', :method => 'post', :enctype => 'multipart/form-data' }
+      %p
+        %label{:for => 'file'}= 'file'
+        %input{:name => 'file', :id => 'file', :type => 'file'}
+        %input{:type => 'submit', :value => 'Upload'}
