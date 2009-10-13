@@ -184,8 +184,9 @@ post '/i' do
 
   status 201
   ImageScience.with_image file do |img|
-    {"size" => {"width" => img.width, "height" => img.height}}.to_json
-  end rescue "{}"
+    { "size" => {"width" => img.width, "height" => img.height},
+      "location" => headers['Location'] }.to_json
+  end rescue { "location" => headers['Location'] }.to_json
 end
 
 #
