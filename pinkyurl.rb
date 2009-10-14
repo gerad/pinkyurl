@@ -6,7 +6,7 @@ require 'sinatra'
 require 'image_science'
 require 'aws/s3'
 require 'memcache'
-require 'json'
+require 'activesupport'
 
 #
 # cache
@@ -178,15 +178,17 @@ end
 
 post '/i' do
   uploaded = params[:file]
-  # TODO: using tempfile.path isn't secure enough
-  file, host = uploaded[:tempfile].path, 'POST'
-  headers['Location'] = @@cache._put file, host, uploaded[:type]
 
+  file = "public/cache/POST/#{ActiveSupport::SecureRandom.hex}"
+  FileUtils.mkdir_p File.dirname(file)
+  FileUtils.cp uploaded[:tempfile].path, file
+
+  headers['Location'] = location = @@cache._put(file, 'POST', uploaded[:type])
   status 201
   ImageScience.with_image file do |img|
     { "size" => {"width" => img.width, "height" => img.height},
-      "location" => headers['Location'] }.to_json
-  end rescue { "location" => headers['Location'] }.to_json
+      "location" => location }.to_json
+  end rescue { "location" => location }.to_json
 end
 
 #
