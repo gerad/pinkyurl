@@ -179,7 +179,8 @@ end
 post '/i' do
   uploaded = params[:file]
 
-  file = "public/cache/POST/#{ActiveSupport::SecureRandom.hex}"
+  id = ActiveSupport::SecureRandom.hex
+  file = "public/cache/POST/#{id}"
   FileUtils.mkdir_p File.dirname(file)
   FileUtils.cp uploaded[:tempfile].path, file
 
@@ -187,8 +188,16 @@ post '/i' do
   status 201
   ImageScience.with_image file do |img|
     { "size" => {"width" => img.width, "height" => img.height},
-      "location" => location }.to_json
+      "id" => id, "location" => location }.to_json
   end rescue { "location" => location }.to_json
+end
+
+delete '/i' do
+  id = params[:id]
+  file = "public/cache/POST/#{id}"
+  @@cache.expire file, 'POST'
+  status 200
+  'deleted'
 end
 
 #
