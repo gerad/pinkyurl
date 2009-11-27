@@ -181,30 +181,6 @@ get '/i' do
   send_file file, :type => 'image/png'
 end
 
-post '/i' do
-  uploaded = params[:file]
-
-  id = ActiveSupport::SecureRandom.hex
-  file = "public/cache/POST/#{id}"
-  FileUtils.mkdir_p File.dirname(file)
-  FileUtils.cp uploaded[:tempfile].path, file
-
-  headers['Location'] = location = @@cache._put(file, 'POST', uploaded[:type])
-  status 201
-  ImageScience.with_image file do |img|
-    { "size" => {"width" => img.width, "height" => img.height},
-      "id" => id, "location" => location }.to_json
-  end rescue { "location" => location }.to_json
-end
-
-delete '/i' do
-  id = params[:id]
-  file = "public/cache/POST/#{id}"
-  @@cache.expire file, 'POST'
-  status 200
-  'deleted'
-end
-
 #
 # views
 #
@@ -243,8 +219,3 @@ form
         %input{:name => 'crop', :id => 'crop'}
         %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
         %label{:for => 'expire'}= 'expire'
-    %form{:action => '/i', :method => 'post', :enctype => 'multipart/form-data' }
-      %p
-        %label{:for => 'file'}= 'file'
-        %input{:name => 'file', :id => 'file', :type => 'file'}
-        %input{:type => 'submit', :value => 'Upload'}

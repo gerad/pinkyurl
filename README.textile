@@ -1,8 +1,0 @@
-h2. pinkyurl.com
-
-Make thumbnails out of urls.
-
-h2. TODO
-
-* delete old files
-* expire urls explicitly
