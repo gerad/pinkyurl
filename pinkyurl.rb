@@ -186,8 +186,8 @@ end
 #
 __END__
 @@stylesheet
-body, input
-  :font-size 32pt
+body, input, button
+  :font 32pt helvetica neue, helvetica, arial, sans-serif
   .minor, .minor input
     :font-size 12pt
 input[type=submit]
@@ -202,20 +202,35 @@ form
     :width 20ex
   input#crop
     :width 5ex
+  label
+    :cursor pointer
 
-@@ index
+@@ layout
 %html
   %head
     %title= 'pinkyurl'
     %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
-  %body
-    %form{:action => '/i', :method => 'get'}
-      %p
-        %label{:for => 'url'}= 'url'
-        %input{:name => 'url', :id => 'url', :value => 'http://www.google.com'}
-        %input{:type => 'submit', :value => 'Go'}
-      %p.minor
-        %label{:for => 'crop'}= 'crop'
-        %input{:name => 'crop', :id => 'crop'}
-        %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
-        %label{:for => 'expire'}= 'expire'
+    //%script{ :type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' }
+    %script{ :type => 'text/javascript', :src => '/javascripts/jquery-1.3.2.js' }
+  %body= yield
+
+@@ index
+%form{:action => '/i', :method => 'get'}
+  %h1 snapshot any website
+  %p
+    %label{:for => 'url'} url
+    %input{:name => 'url', :id => 'url', :value => 'http://www.google.com'}
+    %input{:type => 'submit', :value => 'create'}
+    %a{:href => '#', :class => 'options'} options
+  %p.minor{:style => 'display: none;'}
+    %label{:for => 'crop'} crop
+    %input{:name => 'crop', :id => 'crop'}
+    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+    %label{:for => 'expire'} expire
+:javascript
+  $(document).ready(function() {
+    $('a.options').click(function() {
+      $('.minor').toggle('fast');
+      return false;
+    });
+  });
