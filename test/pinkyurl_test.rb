@@ -39,6 +39,12 @@ class PinkyurlTest < Test::Unit::TestCase
     assert last_response.body[/form/]
   end
 
+  def test_stylesheet
+    get '/stylesheet.css'
+    assert last_response.ok?
+    assert last_response.body[/body/]
+  end
+
   def test_get_invalid_url
     get '/i', :url => 'foo'
     assert last_response.ok?

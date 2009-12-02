@@ -3,6 +3,8 @@ require 'set'
 require 'digest/sha1'
 require 'rubygems'
 require 'sinatra'
+require 'haml'
+require 'sass'
 require 'image_science'
 require 'aws/s3'
 require 'memcache'
@@ -187,7 +189,7 @@ end
 #
 __END__
 @@stylesheet
-# http://kuler.adobe.com/#themeID/162418
+// http://kuler.adobe.com/#themeID/162418
 !green = #B5BF6B
 !dark_green = #9FA668
 !tan = #F2E0C9
