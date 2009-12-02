@@ -3,8 +3,7 @@ Dir['vendor/plugins/*/recipes/*.rb'].each { |plugin| load(plugin) }
 
 set :application, "pinkyurl"
 set :scm, "git"
-set :repository, "git://github.com/visnup/pinkyurl.git"
-set :branch, "fortnight"
+set :repository, "git://github.com/gerad/pinkyurl.git"
 set :deploy_via, :remote_cache
 
 set :user, "app"
