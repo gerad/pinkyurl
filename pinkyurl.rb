@@ -172,7 +172,7 @@ get '/i' do
   end
 
   uncropped = "public/cache/uncropped/#{sha1_url}"
-  cutycapt_with_cache({'url' => url, 'out' => uncropped}, params[:expire])
+  cutycapt_with_cache(params.merge('out' => uncropped), params[:expire])
 
   if crop && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)

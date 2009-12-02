@@ -52,6 +52,13 @@ class PinkyurlTest < Test::Unit::TestCase
     assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
   end
 
+  def test_extra_args
+    get '/i', :url => 'http://google.com', 'out-format' => 'svg'
+    assert last_response.ok?
+    assert_equal 'CutyCapt', PinkyurlTest.args.shift
+    assert_equal %w( --delay=1000 --out-format=svg --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
+  end
+
   def test_args
     defaults = %w/ --out-format=png --delay=1000 /
     assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
