@@ -226,7 +226,7 @@ input[type=text]
 
 form
   :text-align center
-  :margin-top 3em
+  :margin-top 2em
   input#url, input#file
     :width 20ex
   input#crop
