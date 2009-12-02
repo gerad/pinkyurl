@@ -6,7 +6,7 @@ require 'sinatra'
 require 'image_science'
 require 'aws/s3'
 require 'memcache'
-require 'activesupport'
+require 'active_support'
 
 #
 # cache
