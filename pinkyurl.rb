@@ -117,7 +117,7 @@ def cutycapt_with_cache options = {}, force=nil
       File.open file, 'w' do |f| f.write cached end
     else
       cutycapt options
-      @@cache.memcache.set key, File.read(file)
+      @@cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
     end
   end
 end
