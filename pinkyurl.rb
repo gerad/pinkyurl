@@ -32,8 +32,8 @@ class Cache
     warn e
   end
 
-  def put file, host
-    Thread.new { _put file, host }
+  def put file, host, content_type = 'image/png'
+    Thread.new { _put file, host, content_type }
   end
 
   def _put file, host, content_type = 'image/png'
@@ -179,8 +179,9 @@ get '/i' do
     crop uncropped, file, crop
   end
 
-  @@cache.put file, host
-  send_file file, :type => 'image/png'
+  content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
+  @@cache.put file, host, content_type
+  send_file file, :type => content_type
 end
 
 #
