@@ -244,7 +244,12 @@ form
     %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
     //%script{ :type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' }
     %script{ :type => 'text/javascript', :src => '/javascripts/jquery-1.3.2.js' }
-  %body= yield
+  %body
+    = yield
+    %script{ :type => 'text/javascript', :src => 'http://static.getclicky.com/js' }
+    %script{ :type => 'text/javascript' } clicky.init(157700);
+    %noscript
+      %img{ :width => 1, :height => 1, :src => 'http://static.getclicky.com/157700ns.gif' }
 
 @@ index
 %form{:action => '/i', :method => 'get'}
