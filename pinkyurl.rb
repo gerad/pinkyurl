@@ -91,25 +91,30 @@ end
 #
 # helpers
 #
-def cutycapt url, file
-  url = CGI.unescape url  # qt expects no %-escaping
-                          # http://doc.trolltech.com/4.5/qurl.html#QUrl
-  cmd = "CutyCapt --delay=1000 --out-format=png --url='#{url}' --out='#{file}'"
+def args options = {}
+  options.reverse_merge! 'out-format' => 'png', 'delay' => 1000
+  options.map { |k, v| "--#{k}=#{v}" }
+end
+
+def cutycapt options = {}
+  # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
+  options['url'] = CGI.unescape options['url']
   if ENV['DISPLAY']
-    `#{cmd}`
+    system 'CutyCapt', *args(options)
   else
-    `xvfb-run -a --server-args="-screen 0, 800x600x24" #{cmd}`
+    system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(options)
   end
 end
 
-def cutycapt_with_cache url, file, force=nil
+def cutycapt_with_cache options = {}, force=nil
+  file = options['file']
   if force || !File.exists?(file)
     FileUtils.mkdir_p File.dirname(file)
     key = @@cache.key "cutycapt-#{file}"
     if !force && cached = @@cache.memcache.get(key)
       File.open file, 'w' do |f| f.write cached end
     else
-      cutycapt url, file
+      cutycapt options
       @@cache.memcache.set key, File.read(file)
     end
   end
@@ -165,7 +170,7 @@ get '/i' do
   end
 
   uncropped = "public/cache/uncropped/#{sha1_url}"
-  cutycapt_with_cache url, uncropped, params[:expire]
+  cutycapt_with_cache({'url' => url, 'file' => uncropped}, params[:expire])
 
   if crop && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)
