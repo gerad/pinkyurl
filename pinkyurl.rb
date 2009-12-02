@@ -189,14 +189,40 @@ end
 #
 __END__
 @@stylesheet
+# http://kuler.adobe.com/#themeID/162418
+!green = #B5BF6B
+!dark_green = #9FA668
+!tan = #F2E0C9
+!pink = #D98F89
+!red = #8C2B2B
+!highlight = !green + #333
+
+=rounded(!width = 5px)
+  :-webkit-border-radius = !width
+  :-moz-border-radius = !width
+
 body, input, button
   :font 32pt helvetica neue, helvetica, arial, sans-serif
   .minor, .minor input
     :font-size 12pt
+body
+  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!green}), to(#{!dark_green}))
+  :text-shadow = !highlight 0px 1px 0px
+
+a
+  :color = !red
+  :text-decoration none
+
 input[type=submit]
+  +rounded
   :border solid 1px gray
-  :-webkit-border-radius 5px
-  :-moz-border-radius 5px
+  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
+  :text-shadow #fff 0px 1px 0px
+  &:active
+    :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#eee), to(#ddd))
+
+input[type=text]
+  :padding 0.4ex
 
 form
   :text-align center
@@ -222,7 +248,7 @@ form
   %h1 snapshot any website
   %p
     %label{:for => 'url'} url
-    %input{:name => 'url', :id => 'url', :value => 'http://www.google.com'}
+    %input{:name => 'url', :id => 'url', :type => 'text', :value => 'http://www.google.com'}
     %input{:type => 'submit', :value => 'create'}
     %a{:href => '#', :class => 'options'} options
   %p.minor{:style => 'display: none;'}
@@ -232,6 +258,7 @@ form
     %label{:for => 'expire'} expire
 :javascript
   $(document).ready(function() {
+    $('form :input:visible:first').focus();
     $('a.options').click(function() {
       $('.minor').toggle('fast');
       return false;
