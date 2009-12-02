@@ -197,7 +197,7 @@ __END__
 !red = #8C2B2B
 !highlight = !green + #333
 
-=rounded(!width = 5px)
+=rounded(!width = 3px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
 
@@ -206,7 +206,7 @@ body, input, button
   .minor, .minor input
     :font-size 12pt
 body
-  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!green}), to(#{!dark_green}))
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!green + #222}), to(#{!green})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!green}), to(#{!dark_green}))
   :text-shadow = !highlight 0px 1px 0px
 
 a
@@ -215,6 +215,8 @@ a
 
 input[type=submit]
   +rounded
+  :padding-left 1ex
+  :padding-right 1ex
   :border solid 1px gray
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
   :text-shadow #fff 0px 1px 0px
