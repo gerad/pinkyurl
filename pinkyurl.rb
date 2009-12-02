@@ -1,5 +1,4 @@
 require 'uri'
-require 'cgi'
 require 'set'
 require 'digest/sha1'
 require 'rubygems'
@@ -100,7 +99,7 @@ end
 
 def cutycapt options = {}
   # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
-  options['url'] = CGI.unescape options['url']
+  options['url'] = Rack::Utils.unescape options['url']
   if ENV['DISPLAY']
     system 'CutyCapt', *args(options)
   else
