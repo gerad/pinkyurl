@@ -147,12 +147,11 @@ end
 # routes/actions
 #
 get '/' do
-  require 'haml'
   haml :index
 end
 
 get '/stylesheet.css' do
-  require 'sass'
+  content_type 'text/css'
   sass :stylesheet
 end
 
