@@ -1,5 +1,6 @@
 require 'uri'
 require 'cgi'
+require 'set'
 require 'digest/sha1'
 require 'rubygems'
 require 'sinatra'
@@ -82,6 +83,7 @@ end
 
 configure do
   @@cache = DisabledCache.new
+  @@allowable = Set.new %w/ url out out-format min-width max-wait delay /
 end
 
 configure :production do
@@ -93,7 +95,7 @@ end
 #
 def args options = {}
   options.reverse_merge! 'out-format' => 'png', 'delay' => 1000
-  options.map { |k, v| "--#{k}=#{v}" }
+  options.select { |k, v| @@allowable.include? k }.map { |k, v| "--#{k}=#{v}" }
 end
 
 def cutycapt options = {}

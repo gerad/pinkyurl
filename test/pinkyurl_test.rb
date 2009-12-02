@@ -55,5 +55,6 @@ class PinkyurlTest < Test::Unit::TestCase
   def test_args
     defaults = %w/ --out-format=png --delay=1000 /
     assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
+    assert_equal((defaults).sort, args('eofijout' => "'foo;").sort)
   end
 end
