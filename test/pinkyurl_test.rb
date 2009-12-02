@@ -7,7 +7,7 @@ set :environment, :test
 
 def system *args
   PinkyurlTest.args = args
-  if file = args.find { |a| a.match /^--file=(.*)/ } && $1
+  if file = args.find { |a| a.match /^--out=(.*)/ } && $1
     FileUtils.mkdir_p File.dirname(file)
     FileUtils.touch file
   end
@@ -49,11 +49,11 @@ class PinkyurlTest < Test::Unit::TestCase
     get '/i', :url => 'http://google.com'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --file=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --out-format=png --url=http://google.com ), PinkyurlTest.args.sort
+    assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
   end
 
   def test_args
     defaults = %w/ --out-format=png --delay=1000 /
-    assert_equal((defaults + %w/--file='foo;/).sort, args('file' => "'foo;").sort)
+    assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
   end
 end
