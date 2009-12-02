@@ -12,7 +12,7 @@ require 'active_support'
 # cache
 #
 class Cache
-  @@bucket = 'pinkyurl'
+  @@bucket = 'pinkyurl.com'
   attr_reader :memcache
 
   def initialize
