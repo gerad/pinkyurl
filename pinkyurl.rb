@@ -206,6 +206,7 @@ body, input, button
   .minor, .minor input
     :font-size 12pt
 body
+  :background-color = !green
   :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!green + #222}), to(#{!green})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!green}), to(#{!dark_green}))
   :text-shadow = !highlight 0px 1px 0px
 
