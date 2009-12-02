@@ -189,19 +189,19 @@ end
 #
 __END__
 @@stylesheet
-// http://kuler.adobe.com/#themeID/162418
-!green = #B5BF6B
-!dark_green = #9FA668
-!tan = #F2E0C9
-!pink = #D98F89
-!red = #8C2B2B
+// http://kuler.adobe.com/#themeID/660745
+!black = #242424
+!dark_green = #437346
+!medium_green = #97D95C
+!light_green = #D9FF77
+!tan = #E9EB9B
 
 // semantic names
-!background = !green
+!background = !medium_green
 !dark_background = !dark_green
-!highlight = !green + #333
-!link = !red
-!text = #333
+!highlight = !light_green
+!link = !dark_green
+!text = !black
 
 =rounded(!width = 3px)
   :-webkit-border-radius = !width
@@ -211,7 +211,7 @@ body, input, button
   :font 32pt helvetica neue, helvetica, arial, sans-serif
   :color = !text
   .minor, .minor input
-    :font-size 12pt
+    :font-size 18pt
 body
   :background-color = !background + #111
   :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #222}), to(#{!background})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!background}), to(#{!dark_background}))
