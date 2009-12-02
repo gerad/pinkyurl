@@ -195,7 +195,13 @@ __END__
 !tan = #F2E0C9
 !pink = #D98F89
 !red = #8C2B2B
+
+// semantic names
+!background = !green
+!dark_background = !dark_green
 !highlight = !green + #333
+!link = !red
+!text = #333
 
 =rounded(!width = 3px)
   :-webkit-border-radius = !width
@@ -203,15 +209,16 @@ __END__
 
 body, input, button
   :font 32pt helvetica neue, helvetica, arial, sans-serif
+  :color = !text
   .minor, .minor input
     :font-size 12pt
 body
-  :background-color = !green + #111
-  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!green + #222}), to(#{!green})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!green}), to(#{!dark_green}))
+  :background-color = !background + #111
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #222}), to(#{!background})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!background}), to(#{!dark_background}))
   :text-shadow = !highlight 0px 1px 0px
 
 a
-  :color = !red
+  :color = !link
   :text-decoration none
 
 input[type=submit]
