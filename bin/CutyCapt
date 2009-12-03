@@ -3,6 +3,10 @@ require 'open-uri'
 require 'rubygems'
 require 'rack'
 
+def OpenURI.redirectable? *args
+  true
+end
+
 out = nil
 query = ARGV.map do |o|
   k, v = o.split '='
