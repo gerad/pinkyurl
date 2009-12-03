@@ -151,6 +151,10 @@ get '/' do
   haml :index
 end
 
+get '/billing' do
+  haml :billing
+end
+
 get '/stylesheet.css' do
   content_type 'text/css'
   sass :stylesheet
@@ -288,3 +292,30 @@ form
       return false;
     });
   });
+
+@@ billing
+-# http://code.google.com/apis/checkout/developer/Google_Checkout_Beta_Subscriptions.html#HTML_Example
+-MERCHANT_ID = 168965819365964
+%form{:action => "https://checkout.google.com/api/checkout/v2/checkoutForm/Merchant/#{MERCHANT_ID}", :method => 'post'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.item-name', :value => 'PinkyURL Subscription'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.item-description', :value => '12 months of API access to PinkyURL'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.unit-price', :value => '0.00'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.unit-price.currency', :value => 'USD'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.quantity', :value => '1'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.type', :value => 'google'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.period', :value => 'MONTHLY'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.times', :value => '12'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.maximum-charge', :value => '12.00'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.maximum-charge.currency', :value => 'USD'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-name', :value => 'One month of API access to PinkyURL'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-description', :value => 'Flat charge for accessing PinkyURL'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price', :value => '12.00'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price.currency', :value => 'USD'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.display-disposition', :value => 'OPTIMISTIC'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.url', :value => 'http://pinkyurl.com'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.url', :value => 'http://pinkyurl.com'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.description', :value => 'Continue back to PinkyURL'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.digital-content.display-disposition', :value => 'OPTIMISTIC'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.digital-content.description', :value => 'Congratulations! Your subscription is being set up. Feel free to log onto &lt;a href="http:/pinkyurl.com"&gt;pinkyurl.com&lt;/a&gt;and try it out!'}
+  %input{:type => 'hidden', :name => '_charset_'}
+  %input{:type => 'image', :name => 'Google Checkout', :alt => 'Fast checkout through Google', :src => "http://checkout.google.com/buttons/checkout.gif?merchant_id=#{MERCHANT_ID}&w=180&h=46&style=white&variant=text&loc=en_US", :height => "46", :width => "180"}
