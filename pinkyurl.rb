@@ -230,7 +230,7 @@ input[type=submit]
   +rounded
   :padding-left 1ex
   :padding-right 1ex
-  :border = solid 1px !border
+  :border = "solid" 1px !border
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
   :text-shadow #fff 0px 1px 0px
   &:active
@@ -240,7 +240,7 @@ input[type=text]
   :padding 0.4ex
 
 select
-  :border = solid 1px !border
+  :border = "solid" 1px !border
 
 form
   :text-align center
@@ -309,6 +309,7 @@ form
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.maximum-charge.currency', :value => 'USD'}
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-name', :value => 'One month of API access to PinkyURL'}
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-description', :value => 'Flat charge for accessing PinkyURL'}
+  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.quantity', :value => '1'}
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price', :value => '12.00'}
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price.currency', :value => 'USD'}
   %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.display-disposition', :value => 'OPTIMISTIC'}
