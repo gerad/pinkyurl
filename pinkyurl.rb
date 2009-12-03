@@ -289,7 +289,7 @@ img.thumbnail
   %p.minor{:style => 'display: none;'}
     %label{:for => 'out-format'} format
     %select{:name => 'out-format', :id => 'out-format'}
-      - %w/ png svg pdf jpg gif /.each do |f|
+      - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
         %option= f
     %label{:for => 'crop'} crop
     %input{:name => 'crop', :id => 'crop', :value => 640}
