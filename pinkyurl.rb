@@ -158,7 +158,7 @@ end
 
 get '/i' do
   url = params[:url]
-  sha1_url = Digest::SHA1.hexdigest url
+  sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).compact.sort.to_s)
   host = (URI.parse(url).host rescue nil)
   halt 'invalid url'  unless host && host != 'localhost'
 
