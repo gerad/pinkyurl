@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'open-uri'
+require 'rubygems'
+require 'rack'
+
+out = nil
+query = ARGV.map do |o|
+  k, v = o.split '='
+  out = v  if k == '--out'
+  "#{k.sub /^--/, ''}=#{Rack::Utils.escape v}"
+end.join('&')
+
+open out, 'w' do |f|
+  open "http://pinkyurl.com/i?#{query}" do |h|
+    f.write h.read
+  end
+end
