@@ -57,14 +57,14 @@ class PinkyurlTest < Test::Unit::TestCase
     get '/i', :url => 'http://google.com'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
+    assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/500b7ca9b58b5617d4f5565ce036335942707d07 --url=http://google.com ), PinkyurlTest.args.sort
   end
 
   def test_extra_args
     get '/i', :url => 'http://google.com', 'out-format' => 'svg'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=svg --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
+    assert_equal %w( --delay=1000 --out-format=svg --out=public/cache/uncropped/c0707bd1efa93bfa02868cac022d98620a77cdb0 --url=http://google.com ), PinkyurlTest.args.sort
   end
 
   def test_args
