@@ -45,10 +45,12 @@ class PinkyurlTest < Test::Unit::TestCase
     assert last_response.body[/body/]
   end
 
-  def test_get_invalid_url
-    get '/i', :url => 'foo'
-    assert last_response.ok?
-    assert_equal 'invalid url', last_response.body
+  def test_get_invalid_urls
+    %w( foo file:///etc/passwd http://.com ).each do |url|
+      get '/i', :url => url
+      assert last_response.ok?
+      assert_equal 'invalid url', last_response.body, url
+    end
   end
 
   def test_get_url
