@@ -202,15 +202,16 @@ __END__
 !highlight = !light_green
 !link = !dark_green
 !text = !black
+!border = !black + #666
 
 =rounded(!width = 3px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
 
-body, input, button
+body, input, button, select
   :font 32pt helvetica neue, helvetica, arial, sans-serif
   :color = !text
-  .minor, .minor input
+  .minor, .minor input, .minor select
     :font-size 18pt
 body
   :background-color = !background + #111
@@ -225,7 +226,7 @@ input[type=submit]
   +rounded
   :padding-left 1ex
   :padding-right 1ex
-  :border solid 1px gray
+  :border = solid 1px !border
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
   :text-shadow #fff 0px 1px 0px
   &:active
@@ -233,6 +234,9 @@ input[type=submit]
 
 input[type=text]
   :padding 0.4ex
+
+select
+  :border = solid 1px !border
 
 form
   :text-align center
@@ -243,6 +247,7 @@ form
     :width 5ex
   label
     :cursor pointer
+    :margin-left 1ex
 
 @@ layout
 %html
@@ -267,10 +272,14 @@ form
     %input{:type => 'submit', :value => 'create'}
     %a{:href => '#', :class => 'options'} options
   %p.minor{:style => 'display: none;'}
+    %label{:for => 'out-format'} format
+    %select{:name => 'out-format', :id => 'out-format'}
+      - %w/ png svg pdf jpg gif /.each do |f|
+        %option= f
     %label{:for => 'crop'} crop
     %input{:name => 'crop', :id => 'crop'}
-    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
     %label{:for => 'expire'} expire
+    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
 :javascript
   $(document).ready(function() {
     $('form :input:visible:first').focus();
