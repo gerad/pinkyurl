@@ -6,8 +6,6 @@ require 'sinatra'
 require 'haml'
 require 'sass'
 require 'image_science'
-require 'aws/s3'
-require 'memcache'
 require 'active_support'
 
 #
@@ -88,6 +86,8 @@ configure do
 end
 
 configure :production do
+  require 'aws/s3'
+  require 'memcache'
   @@cache = Cache.new
 end
 
