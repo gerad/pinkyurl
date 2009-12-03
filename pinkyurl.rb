@@ -211,6 +211,9 @@ __END__
 =rounded(!width = 3px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
+=drop_shadow
+  :-webkit-box-shadow = 0px 2px 50px !dark_background
+  :-moz-box-shadow = 0px 2px 50px !dark_background
 
 body, input, button, select
   :font 32pt helvetica neue, helvetica, arial, sans-serif
@@ -218,13 +221,10 @@ body, input, button, select
   .minor, .minor input, .minor select
     :font-size 18pt
 body
+  :text-align center
   :background-color = !background + #111
   :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #222}), to(#{!background})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!background}), to(#{!dark_background}))
   :text-shadow = !highlight 0px 1px 0px
-
-a
-  :color = !link
-  :text-decoration none
 
 input[type=submit]
   +rounded
@@ -236,15 +236,21 @@ input[type=submit]
   &:active
     :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#eee), to(#ddd))
 
-input[type=text]
+input[type=text], select
   :padding 0.4ex
+
+a
+  :color = !link
+  :text-decoration none
 
 select
   :border = "solid" 1px !border
 
+p
+  :margin-top 0px
+
 form
-  :text-align center
-  :margin-top 2em
+  :margin-top 1em
   input#url, input#file
     :width 20ex
   input#crop
@@ -252,6 +258,11 @@ form
   label
     :cursor pointer
     :margin-left 1ex
+
+img.loading
+  :margin-top 100px
+img.thumbnail
+  +drop_shadow
 
 @@ layout
 %html
@@ -281,14 +292,48 @@ form
       - %w/ png svg pdf jpg gif /.each do |f|
         %option= f
     %label{:for => 'crop'} crop
-    %input{:name => 'crop', :id => 'crop'}
+    %input{:name => 'crop', :id => 'crop', :value => 640}
     %label{:for => 'expire'} expire
     %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
 :javascript
   $(document).ready(function() {
-    $('form :input:visible:first').focus();
+    var loading = $('<img src="/images/loading.gif" />')
+      .css('opacity', 0)
+      .addClass('loading');
     $('a.options').click(function() {
       $('.minor').toggle('fast');
+      return false;
+    });
+    $('form :input:visible:first').focus();
+    $('form').submit(function() {
+      var almostReady = false;
+      var displayThumbnail = function() {
+        if (!almostReady) {
+          almostReady = true;
+        } else {
+          var f = $('form'),
+              top = f.offset().top + f.outerHeight() + parseInt(f.css('marginBottom'));
+          img
+            .hide()
+            .appendTo(document.body)
+            .wrap($('<a>').attr('href', img.attr('src')))
+            .css('position', 'absolute')
+            .css('top', top)
+            .css('left', ($(document).width() - img.width())/2)
+            .fadeIn();
+        }
+      };
+      var img = $('<img>')
+        .addClass('thumbnail')
+        .load(displayThumbnail)
+        .attr('src', 'http://pinkyurl.com/i?' + $(this).serialize());
+      $('h1')
+        .fadeTo('normal', 0)
+        .slideUp(function() {
+          loading
+            .appendTo(document.body)
+            .fadeTo(1000, 1, displayThumbnail);
+        });
       return false;
     });
   });
