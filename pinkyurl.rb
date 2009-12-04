@@ -81,49 +81,49 @@ class DisabledCache < Cache
 end
 
 configure do
-  @@allowable = Set.new %w/ url out out-format min-width delay /
-  @@cache = DisabledCache.new
+  set :allowable, Set.new(%w/ url out out-format min-width delay /)
+  set :cache, DisabledCache.new
 end
 
 configure :production do
   require 'aws/s3'
   require 'memcache'
-  @@cache = Cache.new
+  set :cache, Cache.new
 end
 
 #
 # helpers
 #
-helpers do
-  def args options = {}
+module CutyCapt
+  def args opt = {}
     user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
-    options.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
-    options.
-      select { |k, v| @@allowable.include? k }.
+    opt.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
+    opt.
+      select { |k, v| options.allowable.include? k }.
       map { |k, v| "--#{k}=#{v}" } +
       [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
   end
 
-  def cutycapt options = {}
+  def cutycapt opt = {}
     # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
-    options['url'] = Rack::Utils.unescape options['url']
+    opt['url'] = Rack::Utils.unescape opt['url']
     if ENV['DISPLAY']
-      system 'CutyCapt', *args(options)
+      system 'CutyCapt', *args(opt)
     else
-      system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(options)
+      system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
     end
   end
 
-  def cutycapt_with_cache options = {}, force=nil
-    file = options['out']
+  def cutycapt_with_cache opt = {}, force=nil
+    file = opt['out']
     if force || !File.exists?(file)
       FileUtils.mkdir_p File.dirname(file)
-      key = @@cache.key "cutycapt-#{file}"
-      if !force && cached = @@cache.memcache.get(key)
+      key = options.cache.key "cutycapt-#{file}"
+      if !force && cached = options.cache.memcache.get(key)
         File.open file, 'w' do |f| f.write cached end
       else
-        cutycapt(options)  or raise "CutyCapt exit status #{$?.exitstatus}"
-        @@cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
+        cutycapt(opt)  or raise "CutyCapt exit status #{$?.exitstatus}"
+        options.cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
       end
     end
   end
@@ -158,6 +158,7 @@ helpers do
     end
   end
 end
+helpers CutyCapt
 
 #
 # routes/actions
@@ -177,7 +178,7 @@ end
 
 get '/i' do
   url = params[:url]
-  sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).compact.sort.to_s)
+  sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*options.allowable).compact.sort.to_s)
   host = (URI.parse(url).host rescue nil)
   halt 'invalid url'  unless host && host != 'localhost'
 
@@ -186,8 +187,8 @@ get '/i' do
   file = "public/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
 
   if params[:expire]
-    @@cache.expire file, host
-  elsif cached = @@cache.get(file, host)
+    options.cache.expire file, host
+  elsif cached = options.cache.get(file, host)
     halt redirect(cached)
   end
 
@@ -201,6 +202,6 @@ get '/i' do
   end
 
   content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
-  @@cache.put file, host, content_type
+  options.cache.put file, host, content_type
   send_file file, :type => content_type
 end

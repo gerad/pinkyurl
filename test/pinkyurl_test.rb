@@ -17,8 +17,10 @@ end
 
 class PinkyurlTest < Test::Unit::TestCase
   include Rack::Test::Methods
+  include CutyCapt
 
   def app; Sinatra::Application end
+  def options; app end
 
   def self.args= a; @args = a end
   def self.args; @args end
