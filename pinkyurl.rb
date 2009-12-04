@@ -82,7 +82,7 @@ end
 
 configure do
   @@cache = DisabledCache.new
-  @@allowable = Set.new %w/ url out out-format min-width max-wait delay /
+  @@allowable = Set.new %w/ url out out-format min-width delay /
 end
 
 configure :production do
