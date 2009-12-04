@@ -294,7 +294,7 @@ img.thumbnail
     %label{:for => 'out-format'} format
     %select{:name => 'out-format', :id => 'out-format'}
       - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
-        %option= f
+        %option{:selected => (f == 'png')}= f
     %label{:for => 'crop'} crop
     %input{:name => 'crop', :id => 'crop', :value => 640}
     %label{:for => 'expire'} expire
