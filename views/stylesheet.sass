@@ -1,0 +1,70 @@
+// http://kuler.adobe.com/#themeID/660745
+!black = #242424
+!dark_green = #437346
+!medium_green = #97D95C
+!light_green = #D9FF77
+!tan = #E9EB9B
+
+// semantic names
+!background = !medium_green
+!dark_background = !dark_green
+!highlight = !light_green
+!link = !dark_green
+!text = !black
+!border = !black + #666
+
+=rounded(!width = 3px)
+  :-webkit-border-radius = !width
+  :-moz-border-radius = !width
+=drop_shadow
+  :-webkit-box-shadow = 0px 2px 50px !dark_background
+  :-moz-box-shadow = 0px 2px 50px !dark_background
+
+body, input, button, select
+  :font 32pt helvetica neue, helvetica, arial, sans-serif
+  :color = !text
+  .minor, .minor input, .minor select
+    :font-size 18pt
+body
+  :text-align center
+  :background-color = !background + #111
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #222}), to(#{!background})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!background}), to(#{!dark_background}))
+  :text-shadow = !highlight 0px 1px 0px
+
+input[type=submit]
+  +rounded
+  :padding-left 1ex
+  :padding-right 1ex
+  :border = "solid" 1px !border
+  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
+  :text-shadow #fff 0px 1px 0px
+  &:active
+    :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#eee), to(#ddd))
+
+input[type=text], select
+  :padding 0.4ex
+
+a
+  :color = !link
+  :text-decoration none
+
+select
+  :border = "solid" 1px !border
+
+p
+  :margin-top 0px
+
+form
+  :margin-top 1em
+  input#url, input#file
+    :width 20ex
+  input#crop
+    :width 5ex
+  label
+    :cursor pointer
+    :margin-left 1ex
+
+img.loading
+  :margin-top 100px
+img.thumbnail
+  +drop_shadow

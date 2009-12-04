@@ -1,0 +1,58 @@
+%form{:action => '/i', :method => 'get'}
+  %h1 snapshot any website
+  %p
+    %label{:for => 'url'} url
+    %input{:name => 'url', :id => 'url', :type => 'text', :value => 'http://google.com'}
+    %input{:type => 'submit', :value => 'create'}
+    %a{:href => '#', :class => 'options'} options
+  %p.minor{:style => 'display: none;'}
+    %label{:for => 'out-format'} format
+    %select{:name => 'out-format', :id => 'out-format'}
+      - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
+        %option{:selected => (f == 'png')}= f
+    %label{:for => 'crop'} crop
+    %input{:name => 'crop', :id => 'crop', :value => 640}
+    %label{:for => 'expire'} expire
+    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+:javascript
+  $(document).ready(function() {
+    var loading = $('<img src="/images/loading.gif" />')
+      .css('opacity', 0)
+      .addClass('loading');
+    $('a.options').click(function() {
+      $('.minor').toggle('fast');
+      return false;
+    });
+    $('form :input:visible:first').focus();
+    $('form').submit(function() {
+      var almostReady = false;
+      var displayThumbnail = function() {
+        if (!almostReady) {
+          almostReady = true;
+        } else {
+          var f = $('form'),
+              top = f.offset().top + f.outerHeight() + parseInt(f.css('marginBottom'));
+          img
+            .hide()
+            .appendTo(document.body)
+            .wrap($('<a>').attr('href', img.attr('src')))
+            .css('position', 'absolute')
+            .css('top', top)
+            .css('left', ($(document).width() - img.width())/2)
+            .fadeIn();
+        }
+      };
+      var img = $('<img>')
+        .addClass('thumbnail')
+        .load(displayThumbnail)
+        .attr('src', 'http://pinkyurl.com/i?' + $(this).serialize());
+      $('h1')
+        .fadeTo('normal', 0)
+        .slideUp(function() {
+          loading
+            .appendTo(document.body)
+            .fadeTo(1000, 1, displayThumbnail);
+        });
+      return false;
+    });
+  });
