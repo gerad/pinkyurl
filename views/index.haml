@@ -19,11 +19,14 @@
     var loading = $('<img src="/images/loading.gif" />')
       .css('opacity', 0)
       .addClass('loading');
+
     $('a.options').click(function() {
       $('.minor').toggle('fast');
       return false;
     });
+
     $('form :input:visible:first').focus();
+
     $('form').submit(function() {
       var almostReady = false;
       var displayThumbnail = function() {
@@ -32,27 +35,32 @@
         } else {
           var f = $('form'),
               top = f.offset().top + f.outerHeight() + parseInt(f.css('marginBottom'));
-          img
-            .hide()
-            .appendTo(document.body)
-            .wrap($('<a>').attr('href', img.attr('src')))
-            .css('position', 'absolute')
-            .css('top', top)
-            .css('left', ($(document).width() - img.width())/2)
-            .fadeIn();
+          loading.fadeOut('normal', function() {
+            img
+              .hide()
+              .appendTo(document.body)
+              .wrap($('<a>').attr('href', img.attr('src')))
+              .fadeIn('fast');
+          });
         }
       };
+
       var img = $('<img>')
-        .addClass('thumbnail')
         .load(displayThumbnail)
+        .addClass('thumbnail')
         .attr('src', 'http://pinkyurl.com/i?' + $(this).serialize());
+
+      $('img.thumbnail').fadeOut();
       $('h1')
         .fadeTo('normal', 0)
         .slideUp(function() {
           loading
             .appendTo(document.body)
-            .fadeTo(1000, 1, displayThumbnail);
+            .show()
+            .fadeTo('slow', 1,
+              displayThumbnail);
         });
+
       return false;
     });
   });
