@@ -10,8 +10,10 @@
     %select{:name => 'out-format', :id => 'out-format'}
       - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
         %option{:selected => (f == 'png')}= f
+    %label{:for => 'resize'} resize
+    %input{:name => 'resize', :id => 'resize', :value => 640}
     %label{:for => 'crop'} crop
-    %input{:name => 'crop', :id => 'crop', :value => 640}
+    %input{:name => 'crop', :id => 'crop'}
     %label{:for => 'expire'} expire
     %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
 :javascript
@@ -48,7 +50,7 @@
       var img = $('<img>')
         .load(displayThumbnail)
         .addClass('thumbnail')
-        .attr('src', 'http://pinkyurl.com/i?' + $(this).serialize());
+        .attr('src', '/i?' + $(this).serialize());
 
       $('img.thumbnail').fadeOut();
       $('h1')

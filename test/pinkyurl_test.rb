@@ -9,7 +9,8 @@ def system *args
   PinkyurlTest.args = args
   if file = args.find { |a| a.match /^--out=(.*)/ } && $1
     FileUtils.mkdir_p File.dirname(file)
-    FileUtils.touch file
+    FileUtils.cp File.dirname(__FILE__)+'/i.png', file
+    PinkyurlTest.files << file
   end
   true
 end
@@ -21,16 +22,15 @@ class PinkyurlTest < Test::Unit::TestCase
 
   def self.args= a; @args = a end
   def self.args; @args end
+  def self.files; @files ||= [] end
 
   def setup
-    @wd = FileUtils.pwd
-    FileUtils.cd File.dirname(__FILE__)
     PinkyurlTest.args = nil
+    PinkyurlTest.files.clear
   end
 
   def teardown
-    FileUtils.cd @wd
-    FileUtils.rm_r File.dirname(__FILE__) + '/public/cache', :force => true
+    FileUtils.rm PinkyurlTest.files
   end
 
   def test_index
@@ -58,6 +58,11 @@ class PinkyurlTest < Test::Unit::TestCase
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
     assert PinkyurlTest.args.include?('--url=http://google.com')
+  end
+
+  def test_crop
+    get '/i', :url => 'http://google.com', :crop => '50x50'
+    assert last_response.ok?
   end
 
   def test_extra_args

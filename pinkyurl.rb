@@ -128,7 +128,7 @@ helpers do
     end
   end
 
-  def crop input, output, size
+  def resize input, output, size
     width, height = size.split 'x'
     ImageScience.with_image input do |img|
       w, h = img.width, img.height
@@ -142,9 +142,18 @@ helpers do
       end
 
       img.with_crop l, t, r, b do |cropped|
-        cropped.resize width.to_i, height.to_i do |thumb|
-          thumb.save output
+        cropped.resize width.to_i, height.to_i do |resized|
+          resized.save output
         end
+      end
+    end
+  end
+
+  def crop input, output, rblt
+    r, b, l, t = *rblt.split(/\D+/).compact
+    ImageScience.with_image input do |img|
+      img.with_crop l.to_i, t.to_i, r.to_i, b.to_i do |cropped|
+        cropped.save output
       end
     end
   end
@@ -172,8 +181,9 @@ get '/i' do
   host = (URI.parse(url).host rescue nil)
   halt 'invalid url'  unless host && host != 'localhost'
 
-  crop = params[:crop]; crop = nil  if crop.nil? || crop == ''
-  file = "public/cache/#{crop || 'uncropped'}/#{sha1_url}"
+  resize = params[:resize]; resize = nil  if resize.blank?
+  crop = params[:crop]; crop = nil  if crop.blank?
+  file = "public/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
 
   if params[:expire]
     @@cache.expire file, host
@@ -181,12 +191,13 @@ get '/i' do
     halt redirect(cached)
   end
 
-  uncropped = "public/cache/uncropped/#{sha1_url}"
-  cutycapt_with_cache(params.merge('out' => uncropped), params[:expire])
+  full = "public/cache/full-uncropped/#{sha1_url}"
+  cutycapt_with_cache(params.merge('out' => full), params[:expire])
 
-  if crop && (!File.exists?(file) || params[:expire])
+  if (resize || crop) && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)
-    crop uncropped, file, crop
+    resize full, file, resize  if resize
+    crop resize ? file : full, file, crop  if crop
   end
 
   content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
