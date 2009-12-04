@@ -173,7 +173,7 @@ end
 
 get '/stylesheets/application.css' do
   content_type 'text/css', :charset => 'utf-8'
-  sass :stylesheet
+  sass :stylesheet, :style => :compressed
 end
 
 get '/i' do
