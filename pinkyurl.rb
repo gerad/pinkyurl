@@ -96,7 +96,7 @@ end
 #
 def args options = {}
   user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
-  options.reverse_merge! 'out-format' => 'png', 'delay' => 1000
+  options.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
   options.
     select { |k, v| @@allowable.include? k }.
     map { |k, v| "--#{k}=#{v}" } +

@@ -68,7 +68,7 @@ class PinkyurlTest < Test::Unit::TestCase
   end
 
   def test_args
-    defaults = %w/ --out-format=png --delay=1000 /
+    defaults = %w/ --out-format=png --delay=1000 --min-width=1024 /
     defaults.push "--user-styles=file://#{Pathname.new('public/stylesheets/cutycapt.css').realpath}"
 
     # valid ones
