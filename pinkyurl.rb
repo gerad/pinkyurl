@@ -287,7 +287,7 @@ img.thumbnail
   %h1 snapshot any website
   %p
     %label{:for => 'url'} url
-    %input{:name => 'url', :id => 'url', :type => 'text', :value => 'http://www.google.com'}
+    %input{:name => 'url', :id => 'url', :type => 'text', :value => 'http://google.com'}
     %input{:type => 'submit', :value => 'create'}
     %a{:href => '#', :class => 'options'} options
   %p.minor{:style => 'display: none;'}
