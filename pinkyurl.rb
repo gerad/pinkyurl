@@ -95,8 +95,12 @@ end
 # helpers
 #
 def args options = {}
+  user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
   options.reverse_merge! 'out-format' => 'png', 'delay' => 1000
-  options.select { |k, v| @@allowable.include? k }.map { |k, v| "--#{k}=#{v}" }
+  options.
+    select { |k, v| @@allowable.include? k }.
+    map { |k, v| "--#{k}=#{v}" } +
+    [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
 end
 
 def cutycapt options = {}
@@ -155,7 +159,7 @@ get '/billing' do
   haml :billing
 end
 
-get '/stylesheet.css' do
+get '/stylesheets/application.css' do
   content_type 'text/css'
   sass :stylesheet
 end
@@ -268,7 +272,7 @@ img.thumbnail
 %html
   %head
     %title= 'pinkyurl'
-    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
+    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheets/application.css'}
     //%script{ :type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' }
     %script{ :type => 'text/javascript', :src => '/javascripts/jquery-1.3.2.js' }
   %body

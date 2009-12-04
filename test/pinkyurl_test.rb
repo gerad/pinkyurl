@@ -30,7 +30,7 @@ class PinkyurlTest < Test::Unit::TestCase
 
   def teardown
     FileUtils.cd @wd
-    FileUtils.rm_r File.dirname(__FILE__) + '/public', :force => true
+    FileUtils.rm_r File.dirname(__FILE__) + '/public/cache', :force => true
   end
 
   def test_index
@@ -40,7 +40,7 @@ class PinkyurlTest < Test::Unit::TestCase
   end
 
   def test_stylesheet
-    get '/stylesheet.css'
+    get '/stylesheets/application.css'
     assert last_response.ok?
     assert last_response.body[/body/]
   end
@@ -57,18 +57,19 @@ class PinkyurlTest < Test::Unit::TestCase
     get '/i', :url => 'http://google.com'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/500b7ca9b58b5617d4f5565ce036335942707d07 --url=http://google.com ), PinkyurlTest.args.sort
+    assert PinkyurlTest.args.include?('--url=http://google.com')
   end
 
   def test_extra_args
     get '/i', :url => 'http://google.com', 'out-format' => 'svg'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=svg --out=public/cache/uncropped/c0707bd1efa93bfa02868cac022d98620a77cdb0 --url=http://google.com ), PinkyurlTest.args.sort
+    assert PinkyurlTest.args.include?('--out-format=svg')
   end
 
   def test_args
     defaults = %w/ --out-format=png --delay=1000 /
+    defaults.push "--user-styles=file://#{Pathname.new('public/stylesheets/cutycapt.css').realpath}"
 
     # valid ones
     assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
