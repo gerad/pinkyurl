@@ -81,8 +81,8 @@ class DisabledCache < Cache
 end
 
 configure do
-  @@cache = DisabledCache.new
   @@allowable = Set.new %w/ url out out-format min-width delay /
+  @@cache = DisabledCache.new
 end
 
 configure :production do
@@ -94,55 +94,57 @@ end
 #
 # helpers
 #
-def args options = {}
-  user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
-  options.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
-  options.
-    select { |k, v| @@allowable.include? k }.
-    map { |k, v| "--#{k}=#{v}" } +
-    [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
-end
-
-def cutycapt options = {}
-  # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
-  options['url'] = Rack::Utils.unescape options['url']
-  if ENV['DISPLAY']
-    system 'CutyCapt', *args(options)
-  else
-    system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(options)
+helpers do
+  def args options = {}
+    user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
+    options.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
+    options.
+      select { |k, v| @@allowable.include? k }.
+      map { |k, v| "--#{k}=#{v}" } +
+      [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
   end
-end
 
-def cutycapt_with_cache options = {}, force=nil
-  file = options['out']
-  if force || !File.exists?(file)
-    FileUtils.mkdir_p File.dirname(file)
-    key = @@cache.key "cutycapt-#{file}"
-    if !force && cached = @@cache.memcache.get(key)
-      File.open file, 'w' do |f| f.write cached end
+  def cutycapt options = {}
+    # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
+    options['url'] = Rack::Utils.unescape options['url']
+    if ENV['DISPLAY']
+      system 'CutyCapt', *args(options)
     else
-      cutycapt(options)  or raise "CutyCapt exit status #{$?.exitstatus}"
-      @@cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
+      system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(options)
     end
   end
-end
 
-def crop input, output, size
-  width, height = size.split 'x'
-  ImageScience.with_image input do |img|
-    w, h = img.width, img.height
-    l, t, r, b = 0, 0, w, h
-
-    if height
-      b = (w.to_f / width.to_f * height.to_f).to_i
-      b = h  if b > h
-    else
-      height = width.to_f / w * h
+  def cutycapt_with_cache options = {}, force=nil
+    file = options['out']
+    if force || !File.exists?(file)
+      FileUtils.mkdir_p File.dirname(file)
+      key = @@cache.key "cutycapt-#{file}"
+      if !force && cached = @@cache.memcache.get(key)
+        File.open file, 'w' do |f| f.write cached end
+      else
+        cutycapt(options)  or raise "CutyCapt exit status #{$?.exitstatus}"
+        @@cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
+      end
     end
+  end
 
-    img.with_crop l, t, r, b do |cropped|
-      cropped.resize width.to_i, height.to_i do |thumb|
-        thumb.save output
+  def crop input, output, size
+    width, height = size.split 'x'
+    ImageScience.with_image input do |img|
+      w, h = img.width, img.height
+      l, t, r, b = 0, 0, w, h
+
+      if height
+        b = (w.to_f / width.to_f * height.to_f).to_i
+        b = h  if b > h
+      else
+        height = width.to_f / w * h
+      end
+
+      img.with_crop l, t, r, b do |cropped|
+        cropped.resize width.to_i, height.to_i do |thumb|
+          thumb.save output
+        end
       end
     end
   end
