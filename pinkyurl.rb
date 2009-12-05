@@ -7,6 +7,7 @@ require 'haml'
 require 'sass'
 require 'image_science'
 require 'active_support'
+require 'sass-color'
 
 #
 # cache
