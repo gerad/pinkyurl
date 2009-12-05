@@ -51,7 +51,7 @@ class Sass::Script::Color
     end
 
     other_hsl = other.hsl
-    if other_hsl[0] == 0
+    if other_hsl[1] == 0
       result = (hsl = self.hsl).dup
       result[2] = (other_hsl[2] + hsl[2]) / 2.0
       Sass::Script::Color.from_hsl result
