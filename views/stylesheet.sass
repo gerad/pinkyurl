@@ -31,13 +31,14 @@ body, input, button, select
 body
   :text-align center
   :background-color = !background
-  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background}), to(#{!background + #999}))
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #eee}), to(#{!background}))
 
 input[type=submit]
   +rounded
   :padding-left 1ex
   :padding-right 1ex
   :border = "solid" 1px !link
+  :background-color = !link
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
   :text-shadow #aaa 0px 1px 0px
@@ -83,7 +84,7 @@ form
 img.loading
   :margin-top 100px
 img.thumbnail
-  :margin-bottom 4em
+  :margin 0px auto 4em
   :border 10px solid rgb(200, 200, 200)
   :border-color = !form
   +rounded(5px)
