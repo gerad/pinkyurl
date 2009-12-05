@@ -9,28 +9,30 @@ def system *args
   PinkyurlTest.args = args
   if file = args.find { |a| a.match /^--out=(.*)/ } && $1
     FileUtils.mkdir_p File.dirname(file)
-    FileUtils.touch file
+    FileUtils.cp File.dirname(__FILE__)+'/i.png', file
+    PinkyurlTest.files << file
   end
   true
 end
 
 class PinkyurlTest < Test::Unit::TestCase
   include Rack::Test::Methods
+  include CutyCapt
 
   def app; Sinatra::Application end
+  def options; app end
 
   def self.args= a; @args = a end
   def self.args; @args end
+  def self.files; @files ||= [] end
 
   def setup
-    @wd = FileUtils.pwd
-    FileUtils.cd File.dirname(__FILE__)
     PinkyurlTest.args = nil
+    PinkyurlTest.files.clear
   end
 
   def teardown
-    FileUtils.cd @wd
-    FileUtils.rm_r File.dirname(__FILE__) + '/public', :force => true
+    FileUtils.rm PinkyurlTest.files
   end
 
   def test_index
@@ -40,7 +42,7 @@ class PinkyurlTest < Test::Unit::TestCase
   end
 
   def test_stylesheet
-    get '/stylesheet.css'
+    get '/stylesheets/application.css'
     assert last_response.ok?
     assert last_response.body[/body/]
   end
@@ -57,19 +59,31 @@ class PinkyurlTest < Test::Unit::TestCase
     get '/i', :url => 'http://google.com'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=png --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
+    assert PinkyurlTest.args.include?('--url=http://google.com')
+  end
+
+  def test_crop
+    get '/i', :url => 'http://google.com', :crop => '50x50'
+    assert last_response.ok?
   end
 
   def test_extra_args
     get '/i', :url => 'http://google.com', 'out-format' => 'svg'
     assert last_response.ok?
     assert_equal 'CutyCapt', PinkyurlTest.args.shift
-    assert_equal %w( --delay=1000 --out-format=svg --out=public/cache/uncropped/234988566c9a0a9cf952cec82b143bf9c207ac16 --url=http://google.com ), PinkyurlTest.args.sort
+    assert PinkyurlTest.args.include?('--out-format=svg')
   end
 
   def test_args
-    defaults = %w/ --out-format=png --delay=1000 /
+    defaults = %w/ --out-format=png --delay=1000 --min-width=1024 /
+    defaults.push "--user-styles=file://#{Pathname.new('public/stylesheets/cutycapt.css').realpath}"
+
+    # valid ones
     assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
-    assert_equal((defaults).sort, args('eofijout' => "'foo;").sort)
+
+    # invalid ones
+    assert_equal(defaults.sort, args('eofijout' => "'foo;").sort)
+    assert_equal(defaults.sort, args('max-wait' => 0).sort)
+    assert_equal(defaults.sort, args('user-styles' => 'file:///etc/passwd').sort)
   end
 end

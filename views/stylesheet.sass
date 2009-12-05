@@ -1,0 +1,91 @@
+// http://kuler.adobe.com/#themeID/493615 - mme la reine
+!pink = #E94B98
+!light_pink = #FF74C5
+!white = #FEE5FF
+!maroon = #652734
+!green = #D4FC9C
+
+!blue = #89C4CC
+!black = #555
+
+// semantic names
+!background = !green
+!form = rgba(255, 255, 255, 0.7)
+!highlight = #fff
+!link = !blue
+!text = !black
+!border = !black + #fff
+
+=rounded(!width = 3px)
+  :-webkit-border-radius = !width
+  :-moz-border-radius = !width
+=drop_shadow
+  :-webkit-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
+  :-moz-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
+
+body, input, button, select
+  :font 28pt helvetica neue, helvetica, arial, sans-serif
+  :color = !black
+  .minor, .minor input, .minor select
+    :font-size 18pt
+body
+  :text-align center
+  :background-color = !background
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #eee}), to(#{!background}))
+
+input[type=submit]
+  +rounded
+  :padding-left 1ex
+  :padding-right 1ex
+  :border = "solid" 1px !link
+  :background-color = !link
+  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!link+#fff}), to(#{!link}))
+  :color = #eee
+  :text-shadow #aaa 0px 1px 0px
+  &:active
+    :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#{!link+#333}), to(#{!link}))
+
+input[type=text], select
+  :padding 0.4ex
+
+a
+  :color = !link
+  :text-decoration none
+
+select
+  :border = "solid" 1px !border
+
+p
+  :margin 0px
+
+// index
+form
+  +rounded(5px)
+  +drop_shadow
+  :background-color = !form
+  :padding 1em
+  :text-shadow = !highlight 0px 1px 0px
+  :margin 1em auto
+  :width 888px
+  input#url, input#file
+    :width 20ex
+  input#resize, input#crop
+    :width 5ex
+  label
+    :cursor pointer
+    :margin-left 1ex
+    &:first-child
+      :margin-left 0px
+  h1
+    :margin 0px 0px 1ex
+  p.minor
+    :margin-top 1ex
+
+img.loading
+  :margin-top 100px
+img.thumbnail
+  :margin 0px auto 4em
+  :border 10px solid rgb(200, 200, 200)
+  :border-color = !form
+  +rounded(5px)
+  :-webkit-box-reflect below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.8, transparent), to(white))

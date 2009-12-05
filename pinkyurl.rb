@@ -6,9 +6,8 @@ require 'sinatra'
 require 'haml'
 require 'sass'
 require 'image_science'
-require 'aws/s3'
-require 'memcache'
 require 'active_support'
+require 'sass-color'
 
 #
 # cache
@@ -83,66 +82,84 @@ class DisabledCache < Cache
 end
 
 configure do
-  @@cache = DisabledCache.new
-  @@allowable = Set.new %w/ url out out-format min-width max-wait delay /
+  set :allowable, Set.new(%w/ url out out-format min-width delay /)
+  set :cache, DisabledCache.new
 end
 
 configure :production do
-  @@cache = Cache.new
+  require 'aws/s3'
+  require 'memcache'
+  set :cache, Cache.new
 end
 
 #
 # helpers
 #
-def args options = {}
-  options.reverse_merge! 'out-format' => 'png', 'delay' => 1000
-  options.select { |k, v| @@allowable.include? k }.map { |k, v| "--#{k}=#{v}" }
-end
-
-def cutycapt options = {}
-  # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
-  options['url'] = Rack::Utils.unescape options['url']
-  if ENV['DISPLAY']
-    system 'CutyCapt', *args(options)
-  else
-    system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(options)
+module CutyCapt
+  def args opt = {}
+    user_styles = File.dirname(__FILE__) + '/public/stylesheets/cutycapt.css'
+    opt.reverse_merge! 'out-format' => 'png', 'delay' => 1000, 'min-width' => 1024
+    opt.
+      select { |k, v| options.allowable.include? k }.
+      map { |k, v| "--#{k}=#{v}" } +
+      [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
   end
-end
 
-def cutycapt_with_cache options = {}, force=nil
-  file = options['out']
-  if force || !File.exists?(file)
-    FileUtils.mkdir_p File.dirname(file)
-    key = @@cache.key "cutycapt-#{file}"
-    if !force && cached = @@cache.memcache.get(key)
-      File.open file, 'w' do |f| f.write cached end
+  def cutycapt opt = {}
+    # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
+    opt['url'] = Rack::Utils.unescape opt['url']
+    if ENV['DISPLAY']
+      system 'CutyCapt', *args(opt)
     else
-      cutycapt(options)  or raise "CutyCapt exit status #{$?.exitstatus}"
-      @@cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
+      system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
     end
   end
-end
 
-def crop input, output, size
-  width, height = size.split 'x'
-  ImageScience.with_image input do |img|
-    w, h = img.width, img.height
-    l, t, r, b = 0, 0, w, h
-
-    if height
-      b = (w.to_f / width.to_f * height.to_f).to_i
-      b = h  if b > h
-    else
-      height = width.to_f / w * h
+  def cutycapt_with_cache opt = {}, force=nil
+    file = opt['out']
+    if force || !File.exists?(file)
+      FileUtils.mkdir_p File.dirname(file)
+      key = options.cache.key "cutycapt-#{file}"
+      if !force && cached = options.cache.memcache.get(key)
+        File.open file, 'w' do |f| f.write cached end
+      else
+        cutycapt(opt)  or raise "CutyCapt exit status #{$?.exitstatus}"
+        options.cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
+      end
     end
+  end
 
-    img.with_crop l, t, r, b do |cropped|
-      cropped.resize width.to_i, height.to_i do |thumb|
-        thumb.save output
+  def resize input, output, size
+    width, height = size.split 'x'
+    ImageScience.with_image input do |img|
+      w, h = img.width, img.height
+      l, t, r, b = 0, 0, w, h
+
+      if height
+        b = (w.to_f / width.to_f * height.to_f).to_i
+        b = h  if b > h
+      else
+        height = width.to_f / w * h
+      end
+
+      img.with_crop l, t, r, b do |cropped|
+        cropped.resize width.to_i, height.to_i do |resized|
+          resized.save output
+        end
+      end
+    end
+  end
+
+  def crop input, output, rblt
+    r, b, l, t = *rblt.split(/\D+/).compact
+    ImageScience.with_image input do |img|
+      img.with_crop l.to_i, t.to_i, r.to_i, b.to_i do |cropped|
+        cropped.save output
       end
     end
   end
 end
+helpers CutyCapt
 
 #
 # routes/actions
@@ -155,167 +172,37 @@ get '/billing' do
   haml :billing
 end
 
-get '/stylesheet.css' do
-  content_type 'text/css'
-  sass :stylesheet
+get '/stylesheets/application.css' do
+  content_type 'text/css', :charset => 'utf-8'
+  sass :stylesheet, :style => :compressed
 end
 
 get '/i' do
   url = params[:url]
-  sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).compact.sort.to_s)
+  sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*options.allowable).compact.sort.to_s)
   host = (URI.parse(url).host rescue nil)
   halt 'invalid url'  unless host && host != 'localhost'
 
-  crop = params[:crop]; crop = nil  if crop.nil? || crop == ''
-  file = "public/cache/#{crop || 'uncropped'}/#{sha1_url}"
+  resize = params[:resize]; resize = nil  if resize.blank?
+  crop = params[:crop]; crop = nil  if crop.blank?
+  file = "public/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
 
   if params[:expire]
-    @@cache.expire file, host
-  elsif cached = @@cache.get(file, host)
+    options.cache.expire file, host
+  elsif cached = options.cache.get(file, host)
     halt redirect(cached)
   end
 
-  uncropped = "public/cache/uncropped/#{sha1_url}"
-  cutycapt_with_cache(params.merge('out' => uncropped), params[:expire])
+  full = "public/cache/full-uncropped/#{sha1_url}"
+  cutycapt_with_cache(params.merge('out' => full), params[:expire])
 
-  if crop && (!File.exists?(file) || params[:expire])
+  if (resize || crop) && (!File.exists?(file) || params[:expire])
     FileUtils.mkdir_p File.dirname(file)
-    crop uncropped, file, crop
+    resize full, file, resize  if resize
+    crop resize ? file : full, file, crop  if crop
   end
 
   content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
-  @@cache.put file, host, content_type
+  options.cache.put file, host, content_type
   send_file file, :type => content_type
 end
-
-#
-# views
-#
-__END__
-@@stylesheet
-// http://kuler.adobe.com/#themeID/660745
-!black = #242424
-!dark_green = #437346
-!medium_green = #97D95C
-!light_green = #D9FF77
-!tan = #E9EB9B
-
-// semantic names
-!background = !medium_green
-!dark_background = !dark_green
-!highlight = !light_green
-!link = !dark_green
-!text = !black
-!border = !black + #666
-
-=rounded(!width = 3px)
-  :-webkit-border-radius = !width
-  :-moz-border-radius = !width
-
-body, input, button, select
-  :font 32pt helvetica neue, helvetica, arial, sans-serif
-  :color = !text
-  .minor, .minor input, .minor select
-    :font-size 18pt
-body
-  :background-color = !background + #111
-  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #222}), to(#{!background})), -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!background}), to(#{!dark_background}))
-  :text-shadow = !highlight 0px 1px 0px
-
-a
-  :color = !link
-  :text-decoration none
-
-input[type=submit]
-  +rounded
-  :padding-left 1ex
-  :padding-right 1ex
-  :border = solid 1px !border
-  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(white), to(#ddd))
-  :text-shadow #fff 0px 1px 0px
-  &:active
-    :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#eee), to(#ddd))
-
-input[type=text]
-  :padding 0.4ex
-
-select
-  :border = solid 1px !border
-
-form
-  :text-align center
-  :margin-top 2em
-  input#url, input#file
-    :width 20ex
-  input#crop
-    :width 5ex
-  label
-    :cursor pointer
-    :margin-left 1ex
-
-@@ layout
-%html
-  %head
-    %title= 'pinkyurl'
-    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheet.css'}
-    //%script{ :type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' }
-    %script{ :type => 'text/javascript', :src => '/javascripts/jquery-1.3.2.js' }
-  %body
-    = yield
-    %script{ :type => 'text/javascript', :src => 'http://static.getclicky.com/js' }
-    %script{ :type => 'text/javascript' } clicky.init(157700);
-    %noscript
-      %img{ :width => 1, :height => 1, :src => 'http://static.getclicky.com/157700ns.gif' }
-
-@@ index
-%form{:action => '/i', :method => 'get'}
-  %h1 snapshot any website
-  %p
-    %label{:for => 'url'} url
-    %input{:name => 'url', :id => 'url', :type => 'text', :value => 'http://www.google.com'}
-    %input{:type => 'submit', :value => 'create'}
-    %a{:href => '#', :class => 'options'} options
-  %p.minor{:style => 'display: none;'}
-    %label{:for => 'out-format'} format
-    %select{:name => 'out-format', :id => 'out-format'}
-      - %w/ png svg pdf jpg gif /.each do |f|
-        %option= f
-    %label{:for => 'crop'} crop
-    %input{:name => 'crop', :id => 'crop'}
-    %label{:for => 'expire'} expire
-    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
-:javascript
-  $(document).ready(function() {
-    $('form :input:visible:first').focus();
-    $('a.options').click(function() {
-      $('.minor').toggle('fast');
-      return false;
-    });
-  });
-
-@@ billing
--# http://code.google.com/apis/checkout/developer/Google_Checkout_Beta_Subscriptions.html#HTML_Example
--MERCHANT_ID = 168965819365964
-%form{:action => "https://checkout.google.com/api/checkout/v2/checkoutForm/Merchant/#{MERCHANT_ID}", :method => 'post'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.item-name', :value => 'PinkyURL Subscription'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.item-description', :value => '12 months of API access to PinkyURL'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.unit-price', :value => '0.00'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.unit-price.currency', :value => 'USD'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.quantity', :value => '1'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.type', :value => 'google'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.period', :value => 'MONTHLY'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.times', :value => '12'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.maximum-charge', :value => '12.00'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.payments.subscription-payment-1.maximum-charge.currency', :value => 'USD'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-name', :value => 'One month of API access to PinkyURL'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.item-description', :value => 'Flat charge for accessing PinkyURL'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price', :value => '12.00'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.unit-price.currency', :value => 'USD'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.display-disposition', :value => 'OPTIMISTIC'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.url', :value => 'http://pinkyurl.com'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.url', :value => 'http://pinkyurl.com'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.subscription.recurrent-item.digital-content.description', :value => 'Continue back to PinkyURL'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.digital-content.display-disposition', :value => 'OPTIMISTIC'}
-  %input{:type => 'hidden', :name => 'shopping-cart.items.item-1.digital-content.description', :value => 'Congratulations! Your subscription is being set up. Feel free to log onto &lt;a href="http:/pinkyurl.com"&gt;pinkyurl.com&lt;/a&gt;and try it out!'}
-  %input{:type => 'hidden', :name => '_charset_'}
-  %input{:type => 'image', :name => 'Google Checkout', :alt => 'Fast checkout through Google', :src => "http://checkout.google.com/buttons/checkout.gif?merchant_id=#{MERCHANT_ID}&w=180&h=46&style=white&variant=text&loc=en_US", :height => "46", :width => "180"}
