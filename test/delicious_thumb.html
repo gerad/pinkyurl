@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>PinkyURL Load Test</title>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+  <script>
+$(document).ready(function() {
+  var queue = loadThumbs();
+
+  var keyUpTimeout, lastTag = 'Enter a tag';
+  $('input[type=text]').keyup(function() {
+    if (keyUpTimeout) clearTimeout(keyUpTimeout);
+    var tag = $(this).val();
+    if (tag === lastTag) return; lastTag = tag;
+    keyUpTimeout = setTimeout(function() {
+      keyUpTimeout = null;
+      queue.length = 0;
+      queue = loadThumbs(tag);
+    }, 1500);
+    $(this).val();
+  }).val(lastTag).focus();
+
+  function loadThumbs(tag) {
+    var searchMsg = 'Searching for popular bookmarks';
+    if (tag) {
+      searchMsg += ' with tag: ' + tag;
+      tag = '/' + tag;
+    } else tag = '';
+
+    $('#stats').html(searchMsg);
+    $('#thumbs').html('');
+
+    var queue = [];
+    $.getJSON('http://feeds.delicious.com/v2/json/popular' + tag + '?count=100&callback=?', function(links) {
+      var totalLoadTime = 0, numLoaded = 0, numFailed = 0;
+      for (var i = 0; i < links.length; i++) queue.push(links[i]);
+
+      function next() {
+        if (!queue.length) return;
+        var link = queue.pop();
+
+        var div = $([
+          '<div style="width:200px;height:275px;float:left;margin:10px;overflow:hidden">',
+            '<a href="',link.u,'" style="max-height:2.2em;display:block;overflow:hidden">',link.d,'</a><br>',
+            '<img><br>',
+            '<div class="status">Loading&hellip;</div>',
+          '</div>'
+        ].join(''));
+
+        div.find('img').load((function() {
+          var timedOut = false, called = false;
+          setTimeout(function() { timedOut = true; onLoad(); }, 10000);
+
+          var loadStart = new Date();
+          return onLoad;
+          function onLoad() {
+            var loadEnd = new Date(), loadTime = (loadEnd - loadStart);
+
+            if (called) return; called = true;
+
+            var status = div.find(".status");
+            if (timedOut) {
+              numFailed++;
+              status.html(['Timed out after', loadTime, 'ms'].join(' '));
+            } else {
+              totalLoadTime += loadTime;
+              numLoaded++;
+              status.html(["Loaded in ", loadTime, "ms"].join(' '));
+            }
+
+            $('#stats').html([
+              'Loaded:', numLoaded,
+              'Failed:', numFailed,
+              'Avg Speed:', Math.round(totalLoadTime / numLoaded),'(ms)'].join(' '));
+
+            next();
+          };
+        })());
+
+        div.find('img').attr('src', "http://pinkyurl.com/i?"+$.param({url: link.u, resize:'200x200'}));
+
+        $('#thumbs').append(div);
+      };
+
+      next();
+    });
+
+    return queue;
+  }
+});
+  </script>
+</head>
+<body>
+  <input type="text" style="width:20ex;font-size:28pt;color:#555" />
+  <h2 id="stats"></h2>
+  <div id="thumbs"></div>
+</body>
+</html>
