@@ -68,7 +68,7 @@
         .slideUp(function() {
           $('#info')
             .find('textarea')
-              .text(url)
+              .text(window.location + url.replace('/', ''))
               .end()
             .fadeIn()
             .find('textarea')
