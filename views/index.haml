@@ -17,6 +17,7 @@
     %input{:name => 'crop', :id => 'crop'}
     %label{:for => 'expire'} expire
     %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+  -#info
 :javascript
   $(document).ready(function() {
     var loading = $('<img src="/images/loading.gif" />')
@@ -58,10 +59,8 @@
       $('h1')
         .fadeTo('normal', 0)
         .slideUp(function() {
-          /*
-          $('form')
-            .append(url);
-            */
+          $('#info')
+            .text(url);
           loading
             .appendTo(document.body)
             .show()
