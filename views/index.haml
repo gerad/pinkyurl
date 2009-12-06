@@ -12,12 +12,15 @@
       - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
         %option{:selected => (f == 'png')}= f
     %label{:for => 'resize'} resize
-    %input{:name => 'resize', :id => 'resize', :value => 640}
+    %input{:name => 'resize', :id => 'resize', :value => 640, :type => 'text'}
     %label{:for => 'crop'} crop
-    %input{:name => 'crop', :id => 'crop'}
+    %input{:name => 'crop', :id => 'crop', :type => 'text'}
     %label{:for => 'expire'} expire
     %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
-  -#info
+  #info{:style => 'display: none;'}
+    %hr/
+    %label{:for => 'embed'} embed
+    %textarea{:id => 'embed'}
 :javascript
   $(document).ready(function() {
     var loading = $('<img src="/images/loading.gif" />')
@@ -29,7 +32,11 @@
       return false;
     });
 
-    $('form :input:visible:first').focus();
+    $('#info textarea').focus(function() {
+      $(this).select();
+    });
+
+    $('form :input:visible:first').select();
 
     $('form').submit(function() {
       var almostReady = false;
@@ -60,7 +67,12 @@
         .fadeTo('normal', 0)
         .slideUp(function() {
           $('#info')
-            .text(url);
+            .find('textarea')
+              .text(url)
+              .end()
+            .fadeIn()
+            .find('textarea')
+              .select();
           loading
             .appendTo(document.body)
             .show()

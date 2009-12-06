@@ -16,28 +16,34 @@
 
 // semantic names
 !background = !black
-!form = rgba(255,255,255,0.75)
+!form = rgba(255,255,255,0.9)
+!input = rgba(255,255,255,0.5)
 !highlight = !white
 !link = !blue
 !text = !black
-!border = !black + #fff
+!border = !black + #fff + #ccc
 
-=rounded(!width = 3px)
+// font sizes
+!large = 28pt
+!medium = 18pt
+
+=rounded(!width = 5px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
 =drop_shadow
   :-webkit-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
   :-moz-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
 
-body, input, button, select
-  :font 28pt helvetica neue, helvetica, arial, sans-serif
+body, input, button, select, textarea
+  :font #{!large} helvetica neue, helvetica, arial, sans-serif
   :color = !black
   .minor, .minor input, .minor select
-    :font-size 18pt
+    :font-size = !medium
 body
   :text-align center
   :background-color = !background
   :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
+  :overflow-y scroll
 
 input[type=submit]
   +rounded
@@ -51,15 +57,15 @@ input[type=submit]
   &:active
     :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#{!link+#333}), to(#{!link}))
 
-input[type=text], select
+input[type=text], select, textarea
   :padding 0.4ex
+  :border = "solid" 1px !border
+  :background-color = !input
+  +rounded
 
 a
   :color = !link
   :text-decoration none
-
-select
-  :border = "solid" 1px !border
 
 p
   :margin 0px
@@ -88,6 +94,20 @@ form
     :color = !light_pink
   p.minor
     :margin-top 1ex
+  #info
+    :font-size = !medium
+    hr
+      :height 0px
+      :border none
+      :border-top = !border 1px solid
+      :border-bottom = !highlight 1px solid
+      :margin 1em 0px
+    label
+      :line-height 1.8em
+    textarea
+      :font-size = !medium
+      :vertical-align top
+      :width 80%
 
 img.loading
   :margin-top 100px
