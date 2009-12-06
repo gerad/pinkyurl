@@ -8,24 +8,37 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
   <script>
 $(document).ready(function() {
-  var queue = loadThumbs();
+
+  var queue = null;
+  function updateForm() {
+    var tag = $('#tag').val();
+    var expire = $('#expire').attr('checked');
+    if (queue) queue.length = 0; // discontinue old update
+    queue = loadThumbs(tag, expire);
+  }
+  updateForm();
 
   var keyUpTimeout, lastTag = 'Enter a tag';
-  $('input[type=text]').keyup(function() {
+  $('#tag').keyup(function() {
     if (keyUpTimeout) clearTimeout(keyUpTimeout);
     var tag = $(this).val();
     if (tag === lastTag) return; lastTag = tag;
     keyUpTimeout = setTimeout(function() {
       keyUpTimeout = null;
-      queue.length = 0;
-      queue = loadThumbs(tag);
+      updateForm();
     }, 1500);
-    $(this).val();
   }).val(lastTag).focus();
 
-  function loadThumbs(tag) {
+  var lastExpire = true;
+  $('#expire').click(function() {
+    var expire = $(this).attr('checked');
+    if (expire === lastExpire) return; lastExpire = expire;
+    updateForm();
+  }).attr('checked', lastExpire);
+
+  function loadThumbs(tag, expire) {
     var searchMsg = 'Searching for popular bookmarks';
-    if (tag) {
+    if (tag && !tag.match(/Enter a tag/)) {
       searchMsg += ' with tag: ' + tag;
       tag = '/' + tag;
     } else tag = '';
@@ -36,53 +49,69 @@ $(document).ready(function() {
     var queue = [];
     $.getJSON('http://feeds.delicious.com/v2/json/popular' + tag + '?count=100&callback=?', function(links) {
       var totalLoadTime = 0, numLoaded = 0, numFailed = 0;
-      for (var i = 0; i < links.length; i++) queue.push(links[i]);
+      for (var i = 0; i < links.length; i++) {
+        var link = links[i];
+        link.i = i;
+
+        $('#thumbs').append([
+          '<div id="thumb_', link.i,'" style="width:200px;height:275px;float:left;margin:10px;overflow:hidden">',
+            '<a href="',link.u,'" style="max-height:2.2em;display:block;overflow:hidden" target="_blank">',link.d,'</a><br>',
+            '<a href="', link.u,'" target="_blank"><img></a><br>',
+            '<div class="status"></div>',
+          '</div>'
+        ].join(''));
+
+        queue.unshift(link);
+      } 
 
       function next() {
         if (!queue.length) return;
         var link = queue.pop();
-
-        var div = $([
-          '<div style="width:200px;height:275px;float:left;margin:10px;overflow:hidden">',
-            '<a href="',link.u,'" style="max-height:2.2em;display:block;overflow:hidden">',link.d,'</a><br>',
-            '<img><br>',
-            '<div class="status">Loading&hellip;</div>',
-          '</div>'
-        ].join(''));
+        var div = $('#thumb_' + link.i);
 
         div.find('img').load((function() {
-          var timedOut = false, called = false;
-          setTimeout(function() { timedOut = true; onLoad(); }, 10000);
+          var called = false;
+          setTimeout(function() { onLoad(true); }, 30000);
+
+          var status = div.find(".status");
+          status.html("Loading&hellip;");
 
           var loadStart = new Date();
           return onLoad;
-          function onLoad() {
+          function onLoad(timedOut) {
+            if (!queue.length) return;
             var loadEnd = new Date(), loadTime = (loadEnd - loadStart);
 
-            if (called) return; called = true;
-
-            var status = div.find(".status");
-            if (timedOut) {
-              numFailed++;
-              status.html(['Timed out after', loadTime, 'ms'].join(' '));
+            if (timedOut === true) {
+              if (!called) {
+                numFailed++;
+                status.html(['Skipping after', loadTime, 'ms'].join(' '));
+              }
             } else {
               totalLoadTime += loadTime;
               numLoaded++;
+              if (called) numFailed--; // didn't actually fail
               status.html(["Loaded in ", loadTime, "ms"].join(' '));
             }
 
+            var avgSpeed = (numLoaded > 0) ?
+              Math.round(totalLoadTime / numLoaded) :
+              "&mdash;";
             $('#stats').html([
               'Loaded:', numLoaded,
               'Failed:', numFailed,
-              'Avg Speed:', Math.round(totalLoadTime / numLoaded),'(ms)'].join(' '));
+              'Avg Speed:', avgSpeed,'(ms)'].join(' '));
 
+            if (called) return; called = true;
             next();
           };
         })());
 
-        div.find('img').attr('src', "http://pinkyurl.com/i?"+$.param({url: link.u, resize:'200x200'}));
+        var params = { url: link.u, resize:'200x200' };
+        if (expire) params.expire = 1;
+        div.find('img').attr('src',
+          "http://pinkyurl.com/i?" + $.param(params));
 
-        $('#thumbs').append(div);
       };
 
       next();
@@ -94,7 +123,11 @@ $(document).ready(function() {
   </script>
 </head>
 <body>
-  <input type="text" style="width:20ex;font-size:28pt;color:#555" />
+  <form>
+    <input id='tag' type="text" style="width:20ex;font-size:28pt;color:#555" />
+    <input id='expire' name='expire' type='checkbox' value='1' checked="checked" />
+    <label for='expire'>expire</label>
+  </form>
   <h2 id="stats"></h2>
   <div id="thumbs"></div>
 </body>
