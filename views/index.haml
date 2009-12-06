@@ -1,4 +1,5 @@
 %form{:action => '/i', :method => 'get'}
+  %h6 <span class="pink">pinky</span>url
   %h1 snapshot any website
   %p
     %label{:for => 'url'} url
@@ -47,15 +48,20 @@
         }
       };
 
+      var url = $(this).attr('action') + '?' + $(this).serialize();
       var img = $('<img>')
         .load(displayThumbnail)
         .addClass('thumbnail')
-        .attr('src', '/i?' + $(this).serialize());
+        .attr('src', url);
 
       $('img.thumbnail').fadeOut();
       $('h1')
         .fadeTo('normal', 0)
         .slideUp(function() {
+          /*
+          $('form')
+            .append(url);
+            */
           loading
             .appendTo(document.body)
             .show()

@@ -12,11 +12,13 @@
 !maroon = #652734
 !green = #D4FC9C
 
+!blue = #86BFCF
+
 // semantic names
 !background = !black
-!form = rgba(254, 240, 255, 0.75)
+!form = rgba(255,255,255,0.75)
 !highlight = !white
-!link = !pink
+!link = !blue
 !text = !black
 !border = !black + #fff
 
@@ -45,7 +47,7 @@ input[type=submit]
   :background-color = !link
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
-  :text-shadow = !black 0px 1px 0px
+  :text-shadow = !border 0px 1px 0px
   &:active
     :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#{!link+#333}), to(#{!link}))
 
@@ -67,7 +69,7 @@ form
   +rounded(5px)
   +drop_shadow
   :background-color = !form
-  :padding 1em
+  :padding 0.5em 1em 1em
   :text-shadow = !highlight 0px 1px 0px
   :margin 1em auto
   :width 888px
@@ -80,8 +82,10 @@ form
     :margin-left 1ex
     &:first-child
       :margin-left 0px
-  h1
+  h1, h6
     :margin 0px 0px 1ex
+  h6 .pink
+    :color = !light_pink
   p.minor
     :margin-top 1ex
 
