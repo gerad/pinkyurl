@@ -207,3 +207,7 @@ get '/i' do
   options.cache.put file, host, content_type
   send_file file, :type => content_type
 end
+
+get '/error' do
+  raise 'testing hoptoad'
+end
