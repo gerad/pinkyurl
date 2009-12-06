@@ -166,6 +166,7 @@ helpers CutyCapt
 # routes/actions
 #
 get '/' do
+  @example = 'http://' + %w/ google.com nytimes.com yahoo.com /.rand
   haml :index
 end
 

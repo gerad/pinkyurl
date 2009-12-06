@@ -51,11 +51,11 @@ input[type=submit]
   :padding-right 1ex
   :border = "solid" 1px !link
   :background-color = !link
-  :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!link+#fff}), to(#{!link}))
+  :background -webkit-gradient(linear, left top, left bottom, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
   :text-shadow = !border 0px 1px 0px
   &:active
-    :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#{!link+#333}), to(#{!link}))
+    :background -webkit-gradient(linear, left bottom, left top, from(#{!link+#ccc}), to(#{!link}))
 
 input[type=text], select, textarea
   :padding 0.4ex
@@ -75,6 +75,7 @@ form
   +rounded(5px)
   +drop_shadow
   :background-color = !form
+  :background -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.9)), to(rgba(255,255,255,0.7)))
   :padding 0.5em 1em 1em
   :text-shadow = !highlight 0px 1px 0px
   :margin 1em auto
