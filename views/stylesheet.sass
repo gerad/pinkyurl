@@ -1,18 +1,22 @@
-// http://kuler.adobe.com/#themeID/493615 - mme la reine
+// http://kuler.adobe.com/#themeID/699303 - waterfall
+!black = #4A463F
+!navy = #396070
+!cyan = #7FA39D
+!tan = #BFBEB0
+!sand = #F2EADF
+
+// http://kuler.adobe.com/#themeID/699316 - mme la reine
 !pink = #E94B98
 !light_pink = #FF74C5
-!white = #FEE5FF
+!white = #FEF0FF
 !maroon = #652734
 !green = #D4FC9C
 
-!blue = #89C4CC
-!black = #555
-
 // semantic names
-!background = !green
-!form = rgba(255, 255, 255, 0.7)
-!highlight = #fff
-!link = !blue
+!background = !black
+!form = rgba(254, 240, 255, 0.75)
+!highlight = !white
+!link = !pink
 !text = !black
 !border = !black + #fff
 
@@ -31,7 +35,7 @@ body, input, button, select
 body
   :text-align center
   :background-color = !background
-  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #eee}), to(#{!background}))
+  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
 
 input[type=submit]
   +rounded
@@ -41,7 +45,7 @@ input[type=submit]
   :background-color = !link
   :background -webkit-gradient(linear, 0% 0%, 0% 100%, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
-  :text-shadow #aaa 0px 1px 0px
+  :text-shadow = !black 0px 1px 0px
   &:active
     :background -webkit-gradient(linear, 0% 100%, 0% 0%, from(#{!link+#333}), to(#{!link}))
 
@@ -88,4 +92,4 @@ img.thumbnail
   :border 10px solid rgb(200, 200, 200)
   :border-color = !form
   +rounded(5px)
-  :-webkit-box-reflect below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.8, transparent), to(white))
+  :-webkit-box-reflect below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.8, transparent), to(rgba(255,255,255,0.3)))

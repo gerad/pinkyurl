@@ -50,10 +50,10 @@ class Sass::Script::Color
       raise Sass::SyntaxError.new("Cannot add a number with units (#{other}) to a color (#{self}).")
     end
 
-    other_hsl = other.hsl
-    if other_hsl[1] == 0
-      result = (hsl = self.hsl).dup
-      result[2] = (other_hsl[2] + hsl[2]) / 2.0
+    if !other_num && (other.hsl[1] == 0 || self.hsl[1] == 0)
+      other_hsl, hsl = other.hsl, self.hsl
+      result = (other_hsl[1] == 0 ? hsl : other_hsl).dup
+      result[2] = other_hsl[2].send(operation, hsl[2]) / 2.0
       Sass::Script::Color.from_hsl result
     else
       result = []

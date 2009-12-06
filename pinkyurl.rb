@@ -102,7 +102,8 @@ module CutyCapt
     opt.
       select { |k, v| options.allowable.include? k }.
       map { |k, v| "--#{k}=#{v}" } +
-      [ "--user-styles=file://#{Pathname.new(user_styles).realpath}" ]
+      [ "--user-styles=file://#{Pathname.new(user_styles).realpath}",
+        "--max-wait=5000" ]
   end
 
   def cutycapt opt = {}

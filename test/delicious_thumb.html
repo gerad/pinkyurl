@@ -5,40 +5,38 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <title>PinkyURL Load Test</title>
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
-  <script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.js"></script>
+  <script type="text/javascript">
 $(document).ready(function() {
 
-  var queue = null;
+  var queue = null, lastExpire, lastTag;
   function updateForm() {
     var tag = $('#tag').val();
     var expire = $('#expire').attr('checked');
+    if (expire === lastExpire && tag == lastTag) return;
+    lastExpire = expire; lastTag = tag;
     if (queue) queue.length = 0; // discontinue old update
     queue = loadThumbs(tag, expire);
   }
   updateForm();
 
-  var keyUpTimeout, lastTag = 'Enter a tag';
+  var keyUpTimeout;
   $('#tag').keyup(function() {
     if (keyUpTimeout) clearTimeout(keyUpTimeout);
-    var tag = $(this).val();
-    if (tag === lastTag) return; lastTag = tag;
     keyUpTimeout = setTimeout(function() {
       keyUpTimeout = null;
       updateForm();
     }, 1500);
-  }).val(lastTag).focus();
+  }).focus();
 
-  var lastExpire = true;
+  var lastExpire = false;
   $('#expire').click(function() {
-    var expire = $(this).attr('checked');
-    if (expire === lastExpire) return; lastExpire = expire;
     updateForm();
-  }).attr('checked', lastExpire);
+  });
 
   function loadThumbs(tag, expire) {
     var searchMsg = 'Searching for popular bookmarks';
-    if (tag && !tag.match(/Enter a tag/)) {
+    if (tag && !tag.match(/ /)) {
       searchMsg += ' with tag: ' + tag;
       tag = '/' + tag;
     } else tag = '';
@@ -84,23 +82,40 @@ $(document).ready(function() {
 
             if (timedOut === true) {
               if (!called) {
+                div.addClass('failed');
                 numFailed++;
                 status.html(['Skipping after', loadTime, 'ms'].join(' '));
               }
             } else {
               totalLoadTime += loadTime;
               numLoaded++;
-              if (called) numFailed--; // didn't actually fail
+              if (called) {
+                numFailed--; // didn't actually fail
+                div.removeClass('failed');
+              }
               status.html(["Loaded in ", loadTime, "ms"].join(' '));
+              div.addClass('loaded');
             }
 
             var avgSpeed = (numLoaded > 0) ?
               Math.round(totalLoadTime / numLoaded) :
               "&mdash;";
             $('#stats').html([
-              'Loaded:', numLoaded,
-              'Failed:', numFailed,
+              '<a href="#" class="loaded">Loaded</a>:', numLoaded,
+              '<a href="#" class="failed">Failed</a>:', numFailed,
               'Avg Speed:', avgSpeed,'(ms)'].join(' '));
+
+            $('#stats a.loaded').click(function() {
+              $('#thumbs .loaded').show();
+              $('#thumbs .failed').hide();
+              return false;
+            });
+
+            $('#stats a.failed').click(function() {
+              $('#thumbs .loaded').hide();
+              $('#thumbs .failed').show();
+              return false;
+            });
 
             if (called) return; called = true;
             next();
@@ -124,8 +139,8 @@ $(document).ready(function() {
 </head>
 <body>
   <form>
-    <input id='tag' type="text" style="width:20ex;font-size:28pt;color:#555" />
-    <input id='expire' name='expire' type='checkbox' value='1' checked="checked" />
+    <input id='tag' type="text" style="width:20ex;font-size:28pt;color:#555" value="Enter a tag" />
+    <input id='expire' name='expire' type='checkbox' value='1' />
     <label for='expire'>expire</label>
   </form>
   <h2 id="stats"></h2>

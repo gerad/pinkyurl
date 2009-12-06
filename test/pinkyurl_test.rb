@@ -77,6 +77,7 @@ class PinkyurlTest < Test::Unit::TestCase
   def test_args
     defaults = %w/ --out-format=png --delay=1000 --min-width=1024 /
     defaults.push "--user-styles=file://#{Pathname.new('public/stylesheets/cutycapt.css').realpath}"
+    defaults.push "--max-wait=5000"
 
     # valid ones
     assert_equal((defaults + %w/--out='foo;/).sort, args('out' => "'foo;").sort)
