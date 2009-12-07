@@ -21,7 +21,7 @@
 !highlight = !white
 !link = !blue
 !text = !black
-!border = !black + #fff + #ccc
+!border_color = !black + #fff + #ccc
 
 // font sizes
 !large = 28pt
@@ -33,6 +33,8 @@
 =drop_shadow
   :-webkit-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
   :-moz-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
+=border(!color = !border_color)
+  :border #{!color} solid 1px
 
 body, input, button, select, textarea
   :font #{!large} helvetica neue, helvetica, arial, sans-serif
@@ -47,19 +49,19 @@ body
 
 input[type=submit]
   +rounded
+  +border(!link)
   :padding-left 1ex
   :padding-right 1ex
-  :border = "solid" 1px !link
   :background-color = !link
   :background -webkit-gradient(linear, left top, left bottom, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
-  :text-shadow = !border 0px 1px 0px
+  :text-shadow #{!border_color} 0px 1px 0px
   &:active
     :background -webkit-gradient(linear, left bottom, left top, from(#{!link+#ccc}), to(#{!link}))
 
 input[type=text], select, textarea
+  +border
   :padding 0.4ex
-  :border = "solid" 1px !border
   :background-color = !input
   +rounded
 
@@ -74,6 +76,7 @@ p
 form
   +rounded(5px)
   +drop_shadow
+  +border
   :background-color = !form
   :background -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.9)), to(rgba(255,255,255,0.7)))
   :padding 0.5em 1em 1em
@@ -100,7 +103,7 @@ form
     hr
       :height 0px
       :border none
-      :border-top #{!border} 1px solid
+      :border-top #{!border_color} 1px solid
       :border-bottom #{!highlight} 1px solid
       :margin 1em 0px
     label
