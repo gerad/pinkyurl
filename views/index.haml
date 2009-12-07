@@ -56,7 +56,9 @@
         }
       };
 
-      var url = $(this).attr('action') + '?' + $(this).serialize();
+      var query = $.param($.grep($(this).serializeArray(),
+        function(o) { return o.value.length > 0; }));
+      var url = $(this).attr('action') + '?' + query;
       var img = $('<img>')
         .load(displayThumbnail)
         .addClass('thumbnail')
