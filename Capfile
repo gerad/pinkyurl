@@ -17,7 +17,11 @@ namespace :deploy do
   end
 
   task :finalize_update, :roles => :app do
+    # configs
     run "ln -fs #{shared_path}/system/aws.yml #{release_path}/config/aws.yml"
     run "ln -fs #{shared_path}/system/memcache.yml #{release_path}/config/memcache.yml"
+
+    # shared cache
+    run "ln -s #{shared_path}/system/cache #{release_path}/public/cache"
   end
 end
