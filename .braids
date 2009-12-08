@@ -1,0 +1,8 @@
+--- 
+vendor/plugins/hoptoad_notifier: 
+  squashed: true
+  url: git://github.com/thoughtbot/hoptoad_notifier.git
+  branch: master
+  type: git
+  revision: 1546c413b139dbc34208c0a0fabf2f762f08d107
+  remote: braid/vendor/plugins/hoptoad-notifier

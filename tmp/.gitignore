@@ -1,1 +1,6 @@
 *.txt
+cache
+pids
+sass-cache
+sessions
+sockets
