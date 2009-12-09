@@ -37,7 +37,7 @@ class ImagesController < ApplicationController
 
   private
     def cache
-      @cache ||= Cache.create
+      @@cache ||= Cache.create
     end
 
     def args opt = {}
