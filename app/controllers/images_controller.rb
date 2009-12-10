@@ -1,4 +1,5 @@
 class ImagesController < ApplicationController
+  before_filter :check_key
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
   def index
@@ -36,9 +37,11 @@ class ImagesController < ApplicationController
   end
 
   private
-    def cache
-      @@cache ||= Cache.create
+    def check_key
+      raise SecurityError  unless @key = Key.from_param(params[:key])
     end
+
+    def cache; @@cache ||= Cache.create end
 
     def args opt = {}
       user_styles = Rails.root + 'public/stylesheets/cutycapt.css'

@@ -12,7 +12,7 @@ class KickTheTiresTest < ActionController::IntegrationTest
     assert_response :ok
     assert_select 'form'
 
-    get '/i', :url => 'http://foo.com'
+    get '/i', :url => 'http://foo.com', :key => 'abc123'
     assert_response :ok
   end
 end

@@ -11,6 +11,16 @@
 
 ActiveRecord::Schema.define(:version => 20091212181849) do
 
+  create_table "keys", :force => true do |t|
+    t.string   "value"
+    t.string   "secret"
+    t.integer  "images_left", :default => 100
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "keys", ["value"], :name => "index_keys_on_value"
+
   create_table "people", :force => true do |t|
     t.string   "email",                            :null => false
     t.string   "crypted_password",                 :null => false

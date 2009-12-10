@@ -7,6 +7,11 @@
     %input{:type => 'submit', :value => 'create'}
     %a{:href => '#', :class => 'options'} options
   %p.minor{:style => 'display: none;'}
+    %label{:for => 'key'} key
+    %input{:name => 'key', :id => 'key', :type => 'text', :value => Rack::Utils.escape(@key)}
+    %label{:for => 'expire'} expire
+    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+  %p.minor{:style => 'display: none;'}
     %label{:for => 'out-format'} format
     %select{:name => 'out-format', :id => 'out-format'}
       - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
@@ -15,17 +20,15 @@
     %input{:name => 'resize', :id => 'resize', :value => 640, :type => 'text'}
     %label{:for => 'crop'} crop
     %input{:name => 'crop', :id => 'crop', :type => 'text'}
-    %label{:for => 'expire'} expire
-    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
   #info{:style => 'display: none;'}
     %hr/
     %label{:for => 'embed'} embed
     %textarea{:id => 'embed'}
+    %p#message
 :javascript
   $(document).ready(function() {
-    var loading = $('<img src="/images/loading.gif" />')
-      .css('opacity', 0)
-      .addClass('loading');
+    var loading = $('<img class="loading" src="/images/loading.gif" />')
+      .css('opacity', 0);
 
     $('a.options').click(function() {
       $('.minor').toggle('fast');
@@ -56,31 +59,47 @@
         }
       };
 
-      var query = $.param($.grep($(this).serializeArray(),
-        function(o) { return o.value.length > 0; }));
-      var url = $(this).attr('action') + '?' + query;
-      var img = $('<img>')
+      var img = $('<img class="thumbnail">')
         .load(displayThumbnail)
-        .addClass('thumbnail')
-        .attr('src', url);
-
-      $('img.thumbnail').fadeOut();
-      $('h1')
-        .fadeTo('normal', 0)
-        .slideUp(function() {
-          $('#info')
-            .find('textarea')
-              .text(window.location + url.replace('/', ''))
-              .end()
-            .fadeIn()
-            .find('textarea')
-              .select();
-          loading
-            .appendTo(document.body)
-            .show()
-            .fadeTo('slow', 1,
-              displayThumbnail);
+        .error(function(e) {
+          $('#message').text('There was an error while generating your image.');
         });
+      var createImage = function(form) {
+        var query = $.param($.grep($(form).serializeArray(),
+          function(o) { return o.value.length > 0; }));
+        var url = $(form).attr('action') + '?' + query;
+        img.attr('src', url);
+
+        $('#message').text('');
+        $('img.thumbnail').fadeOut('fast');
+        $('h1')
+          .fadeTo('normal', 0)
+          .slideUp(function() {
+            $('#info')
+              .find('textarea')
+                .text(window.location + url.replace('/', ''))
+                .end()
+              .slideDown()
+              .find('textarea')
+                .select();
+            loading
+              .appendTo(document.body)
+              .show()
+              .fadeTo('slow', 1,
+                displayThumbnail);
+          });
+      };
+
+      if ($('input#key').val() == '') {
+        $.post('/keys.json', null, function(data, status) {
+          var value = data.key.value;
+          $('input#key').val(value);
+          document.cookie = 'key=' + value + ';max-age=31557600';
+          createImage('form');
+        }, 'json');
+      } else {
+        createImage(this);
+      }
 
       return false;
     });
