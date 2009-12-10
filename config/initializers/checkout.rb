@@ -1,0 +1,1 @@
+GoogleCheckout = YAML.load_file(Rails.root + 'config/checkout.yml')
