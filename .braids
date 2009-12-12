@@ -6,3 +6,10 @@ vendor/plugins/hoptoad_notifier:
   type: git
   revision: 1546c413b139dbc34208c0a0fabf2f762f08d107
   remote: braid/vendor/plugins/hoptoad-notifier
+vendor/plugins/authlogic: 
+  squashed: true
+  url: git://github.com/binarylogic/authlogic.git
+  branch: master
+  type: git
+  revision: f2e95179acf87f11b44c7a58e6083cf84cddff27
+  remote: braid/vendor/plugins/authlogic
