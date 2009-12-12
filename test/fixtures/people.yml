@@ -1,19 +1,12 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
 one:
-  email: MyString
-  crypted_password: MyString
-  persistence_token: MyString
-  perishable_token: MyString
-  current_login_at: 2009-12-12 10:18:49
-  last_login_at: 2009-12-12 10:18:49
-  login_count: 1
-
+  email: one@one.com
+  password_salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("password1" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+  perishable_token: <%= Authlogic::Random.friendly_token %>
+  
 two:
-  email: MyString
-  crypted_password: MyString
-  persistence_token: MyString
-  perishable_token: MyString
-  current_login_at: 2009-12-12 10:18:49
-  last_login_at: 2009-12-12 10:18:49
-  login_count: 1
+  email: two@two.com
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("password1" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+  perishable_token: <%= Authlogic::Random.friendly_token %>

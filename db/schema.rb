@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(:version => 20091212181849) do
   create_table "people", :force => true do |t|
     t.string   "email",                            :null => false
     t.string   "crypted_password",                 :null => false
+    t.string   "password_salt",                    :null => false
     t.string   "persistence_token",                :null => false
     t.string   "perishable_token",                 :null => false
     t.integer  "login_count",       :default => 0, :null => false
