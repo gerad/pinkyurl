@@ -1,0 +1,22 @@
+<p>
+  <b>Email:</b>
+  <%=h @person.email %>
+</p>
+
+<p>
+  <b>Login count:</b>
+  <%=h @person.login_count %>
+</p>
+
+<p>
+  <b>Current login at:</b>
+  <%=h @person.current_login_at %>
+</p>
+
+<p>
+  <b>Last login at:</b>
+  <%=h @person.last_login_at %>
+</p>
+
+<%= link_to 'Edit', edit_person_path(@person) %> |
+<%= link_to 'Back', people_path %>
