@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
   filter_parameter_logging :password, :password_confirmation
   helper_method :person, :person_session
 
+  rescue_responses['SecurityError'] = :unauthorized
+
   def redirect_back_or path
     begin
       redirect_to :back

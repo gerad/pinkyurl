@@ -68,11 +68,11 @@ input[type=submit]
   &:active
     :background -webkit-gradient(linear, left bottom, left top, from(#{!link+#ccc}), to(#{!link}))
 
-input[type=text], select, textarea
+input[type=text], input[type=password], select, textarea
   +border
+  +rounded
   :padding 0.4ex
   :background-color = !input
-  +rounded
 
 a
   :color = !link
@@ -97,6 +97,8 @@ body.index-index
       :width 20ex
     input#resize, input#crop
       :width 5ex
+    input#key
+      :width 18ex
     label
       :cursor pointer
       :margin-left 1ex
@@ -122,7 +124,11 @@ body.index-index
         :font-size = !medium
         :vertical-align top
         :width 80%
-
+        :line-height 1.4em
+        :height = 3 * 1.4em
+    p#message
+      :margin-top 1em
+      :color = !pink
   img.loading
     :margin-top 100px
   img.thumbnail
