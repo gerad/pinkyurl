@@ -26,6 +26,8 @@
 // font sizes
 !large = 28pt
 !medium = 18pt
+!small = 12pt
+
 
 =rounded(!width = 5px)
   :-webkit-border-radius = !width
@@ -47,6 +49,12 @@ body
   :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
   :overflow-y scroll
   :min-height 600px
+
+div.header
+  :text-align right
+  :padding 0px 10px
+  span, a
+    :font-size = !small
 
 input[type=submit]
   +rounded

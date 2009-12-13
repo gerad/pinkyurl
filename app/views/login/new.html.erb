@@ -4,17 +4,16 @@
   <%= f.error_messages %>
 
   <p>
-    <%= f.label :email %><br />
-    <%= f.text_field :email %>
+    <%= f.label :email %> <%= f.text_field :email %>
   </p>
   <p>
-    <%= f.label :password %><br />
-    <%= f.password_field :password %>
+    <%= f.label :password %> <%= f.password_field :password %>
   </p>
 
   <p>
     <%= f.submit 'Login' %>
+    or <%= link_to 'Create account', new_person_path %>
   </p>
 <% end %>
 
-<%= link_to 'Back', :back %>
+<%= link_to 'back', :back %>
