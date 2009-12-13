@@ -1,5 +1,8 @@
-%p= person.email
-= link_to "logout", logout_path, :method => :post
+- if person
+  %p= person.email
+  = link_to "logout", logout_path, :method => :post
+- else
+  = link_to "login", login_path
 %table
   %tr
     %th Plan

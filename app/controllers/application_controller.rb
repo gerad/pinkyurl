@@ -2,8 +2,6 @@
 # Likewise, all the methods added will be available for all controllers.
 
 class ApplicationController < ActionController::Base
-  extend ActiveSupport::Memoizable
-
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
 
@@ -18,14 +16,12 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  private
-    def person_session
-      PersonSession.find
-    end
-    memoize :person_session
+private
+  def person_session
+    @authlogic_person_session ||= PersonSession.find
+  end
 
-    def person
-      person_session.person
-    end
-    memoize :person
+  def person
+    @authlogic_person ||= person_session.try :person
+  end
 end
