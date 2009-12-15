@@ -1,10 +1,10 @@
 require 'test_helper'
 
 class KeyTest < ActiveSupport::TestCase
-  test "keys are case sensitive" do
+  test "keys are case insensitive" do
     k = Key.create
     bad = k.value.downcase
     assert_not_equal bad, k.value
-    assert_nil Key.from_param(bad)
+    assert_equal k, Key.from_param(bad)
   end
 end

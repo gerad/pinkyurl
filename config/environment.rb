@@ -20,6 +20,7 @@ Rails::Initializer.run do |config|
   # config.gem "sqlite3-ruby", :lib => "sqlite3"
   # config.gem "aws-s3", :lib => "aws/s3"
   config.gem 'aws-s3', :lib => 'aws/s3'
+  config.gem 'base32'
   config.gem 'haml'
   config.gem 'image_science'
   config.gem 'memcache-client', :lib => 'memcache'

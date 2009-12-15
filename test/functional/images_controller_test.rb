@@ -22,7 +22,7 @@ class ImagesControllerTest < ActionController::TestCase
 
   test "invalid key" do
     assert_raise SecurityError do
-      get :index, :url => 'http://google.com', :key => 'ABC123'
+      get :index, :url => 'http://google.com', :key => 'ABd123'
     end
 
     assert_raise SecurityError do
