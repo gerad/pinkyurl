@@ -1,11 +1,12 @@
 class Key < ActiveRecord::Base
+  belongs_to :person
+
   def to_param; value end
   def self.from_param id; first :conditions => {:value => id} end
 
   def after_initialize
     if new_record?
       self.value ||= random(10)
-      self.secret ||= random(20)
     end
   end
 

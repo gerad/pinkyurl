@@ -9,14 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20091212181849) do
+ActiveRecord::Schema.define(:version => 20091216011118) do
 
   create_table "keys", :force => true do |t|
     t.string   "value"
-    t.string   "secret"
-    t.integer  "images_left", :default => 100
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "person_id"
   end
 
   add_index "keys", ["value"], :name => "index_keys_on_value"
