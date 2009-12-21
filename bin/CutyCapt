@@ -8,6 +8,7 @@ def OpenURI.redirectable? *args
 end
 
 out = nil
+ARGV.push '--key=EJVPQNQ63DKKUFYT'
 query = ARGV.map do |o|
   k, v = o.split '='
   out = v  if k == '--out'
