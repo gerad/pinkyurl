@@ -45,13 +45,6 @@
         %th Small
         %th Medium
         %th Large
-      %tr.price
-        %th Price
-        %td $0
-        %td $4
-        %td $12
-        %td $24
-        %td $48
       %tr
         %th
           %a.explain{:href => '#'} Snapshots
@@ -85,38 +78,40 @@
       %tr
         %th
           %a.explain{:href => '#'} Commercial Use
-        %td No
-        %td No
-        %td Yes
-        %td Yes
-        %td Yes
+        %td= image_tag('no.png')
+        %td= image_tag('no.png')
+        %td= image_tag('yes.png')
+        %td= image_tag('yes.png')
+        %td= image_tag('yes.png')
       %tr.explain
         %td{ :colspan => 6 }
           .explain
             Free and personal plans cannot be used for commercial (for-profit)
             projects.
-      %tr
-        %th
-          %a.explain{:href => '#'} SSL
-        %td No
-        %td No
-        %td Yes
-        %td Yes
-        %td Yes
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            Whether SSL requests to images are allowed.  To make an SSL
-            request, simply change the domain of your API call to
-            = link_to "https://pinkyurl.com/"
+      /
+        %tr
+          %th
+            %a.explain{:href => '#'} SSL
+          %td= image_tag('no.png')
+          %td= image_tag('no.png')
+          %td= image_tag('yes.png')
+          %td= image_tag('yes.png')
+          %td= image_tag('yes.png')
+        %tr.explain
+          %td{ :colspan => 6 }
+            .explain
+              Whether Secure Sockets Layer (SSL) requests to images are allowed.
+              To make an SSL request, simply change the domain of your API call
+              to
+              = link_to "https://pinkyurl.com/"
       %tr
         %th
           %a.explain{:href => '#'} Referrer/Domain Limiting
-        %td No
-        %td Yes
-        %td Yes
-        %td Yes
-        %td Yes
+        %td= image_tag('no.png')
+        %td= image_tag('yes.png')
+        %td= image_tag('yes.png')
+        %td= image_tag('yes.png')
+        %td= image_tag('yes.png')
       %tr.explain
         %td{ :colspan => 6 }
           .explain
@@ -125,11 +120,21 @@
       %tr
         %th
           %a.explain{:href => '#'} Usage Stats
-        %td Public
-        %td Private
-        %td Private
-        %td Private
-        %td Private
+        %td
+          = image_tag('public.png')
+          Public
+        %td
+          = image_tag('private.png')
+          Private
+        %td
+          = image_tag('private.png')
+          Private
+        %td
+          = image_tag('private.png')
+          Private
+        %td
+          = image_tag('private.png')
+          Private
       %tr.explain
         %td{ :colspan => 6 }
           .explain
@@ -137,6 +142,13 @@
             hits, top referrers, recently viewed snapshots, most viewed
             snapshots.  These statistics are kept private for paid plans, but
             may be made publicly available for unpaid plans.
+      %tr.price
+        %th Price
+        %td $0
+        %td $4
+        %td $12
+        %td $24
+        %td $48
       %tr
         %td
         %td Free
@@ -144,7 +156,6 @@
         %td= render :partial => "checkout_form", :locals => { :price => '12.00' }
         %td= render :partial => "checkout_form", :locals => { :price => '24.00' }
         %td= render :partial => "checkout_form", :locals => { :price => '48.00' }
-
         // %em Custom Stylesheet -
         // upload a custom style sheet to brand or format all images generated
         // for your API key. Coming soon.
