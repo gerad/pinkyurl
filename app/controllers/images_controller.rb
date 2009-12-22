@@ -2,7 +2,7 @@ class ImagesController < ApplicationController
   before_filter :check_key
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
-  def index
+  def create
     stats = { :access_at => Time.now }
     begin
       url = stats[:url] = params[:url]
@@ -40,6 +40,7 @@ class ImagesController < ApplicationController
       GreenSavant.log stats
     end
   end
+  alias_method :index, :create
 
   private
     def check_key
