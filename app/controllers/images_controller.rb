@@ -3,37 +3,42 @@ class ImagesController < ApplicationController
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
   def index
-    url = params[:url]
-    sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).hash.to_s)
-    host = (URI.parse(url).host rescue nil)
-    unless host && host != 'localhost'
-      render :text => 'invalid url', :status => :unprocessable_entity
-      return
+    stats = { :access_at => Time.now }
+    begin
+      url = stats[:url] = params[:url]
+      sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).hash.to_s)
+      host = (URI.parse(url).host rescue nil)
+      unless host && host != 'localhost'
+        render :text => 'invalid url', :status => :unprocessable_entity
+        return
+      end
+
+      resize = params[:resize]; resize = nil  if resize.blank?
+      crop = params[:crop]; crop = nil  if crop.blank?
+      file = Rails.root + "tmp/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
+
+      if params[:expire]
+        cache.expire file, host
+      elsif cached = cache.get(file, host)
+        redirect_to cached
+        return
+      end
+
+      full = Rails.root + "tmp/cache/full-uncropped/#{sha1_url}"
+      cutycapt_with_cache(params.merge('out' => full), params[:expire])
+
+      if (resize || crop) && (!File.exists?(file) || params[:expire])
+        FileUtils.mkdir_p File.dirname(file)
+        resize full, file, resize  if resize
+        crop resize ? file : full, file, crop  if crop
+      end
+
+      content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
+      cache.put file, host, content_type
+      send_file file, :type => content_type, :disposition => 'inline'
+    ensure
+      GreenSavant.log stats
     end
-
-    resize = params[:resize]; resize = nil  if resize.blank?
-    crop = params[:crop]; crop = nil  if crop.blank?
-    file = Rails.root + "tmp/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
-
-    if params[:expire]
-      cache.expire file, host
-    elsif cached = cache.get(file, host)
-      redirect_to cached
-      return
-    end
-
-    full = Rails.root + "tmp/cache/full-uncropped/#{sha1_url}"
-    cutycapt_with_cache(params.merge('out' => full), params[:expire])
-
-    if (resize || crop) && (!File.exists?(file) || params[:expire])
-      FileUtils.mkdir_p File.dirname(file)
-      resize full, file, resize  if resize
-      crop resize ? file : full, file, crop  if crop
-    end
-
-    content_type = Rack::Mime.mime_type('.' + (params['out-format'] || 'png'))
-    cache.put file, host, content_type
-    send_file file, :type => content_type, :disposition => 'inline'
   end
 
   private

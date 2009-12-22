@@ -1,0 +1,11 @@
+development:
+  url: http://localhost:8080/
+  enabled: true
+
+test:
+  url: http://localhost:8080/
+  enabled: false
+
+production:
+  url: http://greensavant.appspot.com/
+  enabled: true
