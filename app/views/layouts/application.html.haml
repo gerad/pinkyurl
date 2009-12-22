@@ -2,21 +2,16 @@
 %html
   %head
     %title= 'pinkyurl'
-    %link{:rel => 'stylesheet', :type => 'text/css', :media => 'all', :href => '/stylesheets/application.css'}
+    = stylesheet_link_tag 'application', :media => 'all'
     - if Rails.env.production?
-      %script{ :type => 'text/javascript', :src => 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js' }
+      = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js'
     - else
-      %script{ :type => 'text/javascript', :src => '/javascripts/jquery-1.3.2.js' }
-  %body{:class => "#{params[:controller]} #{params[:controller]}-#{params[:action]}"}
-    .header
-      - if person
-        %span= person.email
-        = link_to "logout", logout_path, :method => :post
-      - else
-        = link_to "join", new_person_path
-        = link_to "login", login_path
+      = javascript_include_tag '/javascripts/jquery-1.3.2.js'
+  %body{:class => "#{params[:controller]} #{params[:controller]}-#{params[:action]} #{@_first_render.path_without_format_and_extension.gsub('/', '-')}"}
     = yield
-    %script{ :type => 'text/javascript', :src => 'http://static.getclicky.com/js' }
-    %script{ :type => 'text/javascript' } clicky.init(157700);
-    %noscript
-      %img{ :width => 1, :height => 1, :src => 'http://static.getclicky.com/157700ns.gif' }
+    - if Rails.env.production?
+      = javascript_include_tag 'http://static.getclicky.com/js'
+      :javascript
+        clicky.init(157700);
+      %noscript
+        %img{ :width => 1, :height => 1, :src => 'http://static.getclicky.com/157700ns.gif' }

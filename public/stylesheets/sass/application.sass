@@ -18,7 +18,7 @@
 !background = !black
 !form = rgba(255,255,255,0.9)
 !input = rgba(255,255,255,0.5)
-!highlight = !white
+!highlight = rgba(255,255,255,0.5)
 !link = !blue
 !text = !black
 !border_color = !black + #fff + #ccc
@@ -50,13 +50,7 @@ body
   :overflow-y scroll
   :min-height 600px
 
-div.header
-  :text-align right
-  :padding 0px 10px
-  span, a
-    :font-size = !small
-
-input[type=submit]
+input[type=submit], button
   +rounded
   +border(!link)
   :padding-left 1ex
@@ -83,7 +77,10 @@ p
 
 // index
 body.index-index
-  form
+  .login
+    :float right
+    :font-size = !small
+  .box
     +rounded(5px)
     +drop_shadow
     +border
@@ -93,12 +90,13 @@ body.index-index
     :text-shadow = !highlight 0px 1px 0px
     :margin 1em auto
     :width 888px
+  form
     input#url, input#file
       :width 20ex
     input#resize, input#crop
       :width 5ex
     input#key
-      :width 18ex
+      :width 20ex
     label
       :cursor pointer
       :margin-left 1ex
@@ -110,6 +108,8 @@ body.index-index
       :color = !light_pink
     p.minor
       :margin-top 1ex
+    p.options, #info
+      :display none
     #info
       :font-size = !medium
       hr
@@ -127,18 +127,32 @@ body.index-index
         :line-height 1.4em
         :height = 3 * 1.4em
     p#message
-      :margin-top 1em
       :color = !pink
   img.loading
-    :margin-top 100px
+    :margin-top 1em
   img.thumbnail
     :margin 0px auto 4em
     :border 10px solid rgb(200, 200, 200)
     :border-color = !form
     +rounded(5px)
     :-webkit-box-reflect below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.8, transparent), to(rgba(255,255,255,0.3)))
-
-// billing
-body.index-billing
-  table
-    :background-color = !form
+  #billing
+    :display none
+    :font-size = !small
+    input[type=submit]
+      :font-size = !small
+    table
+      :table-layout fixed
+      :margin 0px auto
+      :width 100%
+      th:first-child
+        :text-align left
+        :width 24ex
+      tr:first-child th:first-child
+        :text-align center
+      tr.explain
+        :text-align left
+        .explain
+          :display none
+          :padding 1ex
+          :line-height 1.6em
