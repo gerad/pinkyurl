@@ -39,7 +39,7 @@
     %h2 Pick a plan to claim your API key
     %table
       %tr
-        %th Plan
+        %th
         %th Free
         %th Personal
         %th Small
@@ -159,7 +159,7 @@
     });
 
     $('#claim').click(function() {
-      $('#billing').slideDown('fast');
+      $('#billing').slideToggle('fast');
       return false;
     });
 
