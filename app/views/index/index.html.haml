@@ -1,37 +1,171 @@
-%form{:action => '/i', :method => 'get'}
-  %h6 <span class="pink">pinky</span>url
-  %h1 snapshot any website
-  %p
-    %label{:for => 'url'} url
-    %input{:name => 'url', :id => 'url', :type => 'text', :value => @example}
-    %input{:type => 'submit', :value => 'create'}
-    %a{:href => '#', :class => 'options'} options
-  %p.minor{:style => 'display: none;'}
-    %label{:for => 'key'} key
-    %input{:name => 'key', :id => 'key', :type => 'text', :value => Rack::Utils.escape(@key)}
-    %label{:for => 'expire'} expire
-    %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
-  %p.minor{:style => 'display: none;'}
-    %label{:for => 'out-format'} format
-    %select{:name => 'out-format', :id => 'out-format'}
-      - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
-        %option{:selected => (f == 'png')}= f
-    %label{:for => 'resize'} resize
-    %input{:name => 'resize', :id => 'resize', :value => 640, :type => 'text'}
-    %label{:for => 'crop'} crop
-    %input{:name => 'crop', :id => 'crop', :type => 'text'}
-  #info{:style => 'display: none;'}
-    %hr/
-    %label{:for => 'embed'} embed
-    %textarea{:id => 'embed'}
-    %p#message
+.box
+  %form{:action => '/i', :method => 'get', :id => 'i'}
+    %h6
+      .login
+        - if person
+          %span= person.email
+          = link_to "logout", logout_path, :method => :post
+        - else
+          = link_to "login", login_path
+      <span class="pink">pinky</span>url
+    %h1 snapshot any website
+    %p
+      %label{:for => 'url'} URL
+      %input{:name => 'url', :id => 'url', :type => 'text', :value => @example}
+      %input{:type => 'submit', :value => 'create'}
+      %a.options{:href => '#'} options
+    %p.minor.options
+      %label{:for => 'out-format'} format
+      %select{:name => 'out-format', :id => 'out-format'}
+        - %w/ bmp gif html itext jpeg mng pdf png ppm ps rtree svg tiff xbm xpm /.each do |f|
+          %option{:selected => (f == 'png')}= f
+      %label{:for => 'resize'} resize
+      %input{:name => 'resize', :id => 'resize', :value => 640, :type => 'text'}
+      %label{:for => 'crop'} crop
+      %input{:name => 'crop', :id => 'crop', :type => 'text'}
+      %label{:for => 'expire'} expire
+      %input{:name => 'expire', :id => 'expire', :type => 'checkbox', :value => 1}
+    #info
+      %hr/
+      %p#message.minor
+      %p.minor
+        %label{:for => 'embed'} embed
+        %textarea{:id => 'embed'}
+      %p.minor
+        %label{:for => 'key'} API key
+        %input{:type => 'text', :id => 'key', :name => 'key'}
+        %button{:id => 'claim'} claim
+  #billing
+    %h2 Pick a plan to claim your API key
+    %table
+      %tr
+        %th
+        %th Free
+        %th Personal
+        %th Small
+        %th Medium
+        %th Large
+      %tr.price
+        %th Price
+        %td $0
+        %td $4
+        %td $12
+        %td $24
+        %td $48
+      %tr
+        %th
+          %a.explain{:href => '#'} Snapshots
+        %td 100
+        %td 1,000
+        %td 2,000
+        %td 6,000
+        %td 20,000
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            Number of snapshots that are encoded at the highest priority. High
+            priority snapshots generally take under 10 seconds to render. If
+            you go over your allotted number of high priority snapshots they
+            will be encoded at lower priority, which can take minutes to
+            finish.
+      %tr
+        %th
+          %a.explain{:href => '#'} Cache Size
+        %td 5,000
+        %td 10,000
+        %td 20,000
+        %td 60,000
+        %td 200,000
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            Cached images are served almost instantly, in most cases in well
+            under half a second.  There is no limit on the number of
+            impressions of images that are served from the cache.
+      %tr
+        %th
+          %a.explain{:href => '#'} Commercial Use
+        %td No
+        %td No
+        %td Yes
+        %td Yes
+        %td Yes
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            Free and personal plans cannot be used for commercial (for-profit)
+            projects.
+      %tr
+        %th
+          %a.explain{:href => '#'} SSL
+        %td No
+        %td No
+        %td Yes
+        %td Yes
+        %td Yes
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            Whether SSL requests to images are allowed.  To make an SSL
+            request, simply change the domain of your API call to
+            = link_to "https://pinkyurl.com/"
+      %tr
+        %th
+          %a.explain{:href => '#'} Referrer/Domain Limiting
+        %td No
+        %td Yes
+        %td Yes
+        %td Yes
+        %td Yes
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            Make sure that nobody can use your API key but you.  Limit the
+            referrers that are allowed to create images with your API key.
+      %tr
+        %th
+          %a.explain{:href => '#'} Usage Stats
+        %td Public
+        %td Private
+        %td Private
+        %td Private
+        %td Private
+      %tr.explain
+        %td{ :colspan => 6 }
+          .explain
+            See statistics about your usage.  How many encodes, how many cache
+            hits, top referrers, recently viewed snapshots, most viewed
+            snapshots.  These statistics are kept private for paid plans, but
+            may be made publicly available for unpaid plans.
+      %tr
+        %td
+        %td Free
+        %td= render :partial => "checkout_form", :locals => { :price => '4.00' }
+        %td= render :partial => "checkout_form", :locals => { :price => '12.00' }
+        %td= render :partial => "checkout_form", :locals => { :price => '24.00' }
+        %td= render :partial => "checkout_form", :locals => { :price => '48.00' }
+
+        // %em Custom Stylesheet -
+        // upload a custom style sheet to brand or format all images generated
+        // for your API key. Coming soon.
 :javascript
   $(document).ready(function() {
     var loading = $('<img class="loading" src="/images/loading.gif" />')
       .css('opacity', 0);
 
     $('a.options').click(function() {
-      $('.minor').toggle('fast');
+      $('p.options').toggle('fast');
+      return false;
+    });
+
+    $('#claim').click(function() {
+      $('#billing').slideToggle('fast');
+      return false;
+    });
+
+    $('a.explain').click(function() {
+      $(this).closest('tr').next('tr.explain').find('.explain')
+        .slideToggle('fast');
       return false;
     });
 
@@ -41,7 +175,7 @@
 
     $('form :input:visible:first').select();
 
-    $('form').submit(function() {
+    $('form#i').submit(function() {
       var almostReady = false;
       var displayThumbnail = function() {
         if (!almostReady) {
@@ -90,12 +224,12 @@
           });
       };
 
-      if ($('input#key').val() == '') {
+      if (!$('input#key').val()) {
         $.post('/keys.json', null, function(data, status) {
           var value = data.key.value;
           $('input#key').val(value);
           document.cookie = 'key=' + value + ';max-age=31557600';
-          createImage('form');
+          createImage('#i');
         }, 'json');
       } else {
         createImage(this);

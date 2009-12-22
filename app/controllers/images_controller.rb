@@ -1,9 +1,9 @@
 class ImagesController < ApplicationController
   before_filter :check_key
-  around_filter :log_stats, :only => :index
+  around_filter :log_stats
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
-  def index
+  def create
     url = @stats[:url] = params[:url]
     sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).hash.to_s)
     host = (URI.parse(url).host rescue nil)
@@ -37,6 +37,7 @@ class ImagesController < ApplicationController
     cache.put file, host, content_type
     send_file file, :type => content_type, :disposition => 'inline'
   end
+  alias_method :index, :create
 
   private
     def check_key

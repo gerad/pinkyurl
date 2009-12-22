@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :images, :as => 'i'
   map.resources :keys
   map.resources :people
 
@@ -32,7 +33,6 @@ ActionController::Routing::Routes.draw do |map|
   #     # Directs /admin/products/* to Admin::ProductsController (app/controllers/admin/products_controller.rb)
   #     admin.resources :products
   #   end
-  map.image 'i', :controller => 'images'
   map.billing 'billing', :controller => 'index', :action => 'billing'
   map.login 'login', :controller => 'login', :action => 'new', :conditions => {:method => :get}
   map.connect 'login', :controller => 'login', :action => 'create', :conditions => {:method => :post}
