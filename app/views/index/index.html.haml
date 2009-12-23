@@ -33,7 +33,7 @@
         %textarea{:id => 'embed'}
       %p.minor
         %label{:for => 'key'} API key
-        %input{:type => 'text', :id => 'key', :name => 'key'}
+        %input{:type => 'text', :id => 'key', :name => 'key', :value => @key.try(:value)}
         %button{:id => 'claim'} claim
   #billing
     %h2 Pick a plan to claim your API key
