@@ -1,8 +1,8 @@
 class Key < ActiveRecord::Base
   belongs_to :person
 
-  def to_param; value end
-  def self.from_param id; find_by_value id end
+  def to_param; secret end
+  def self.from_param id; find_by_secret! id end
 
   def after_initialize
     if new_record?

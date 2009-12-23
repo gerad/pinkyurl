@@ -4,16 +4,16 @@
       .login
         - if person
           %span= person.email
-          = link_to "logout", logout_path, :method => :post
+          = link_to "Sign out", logout_path, :method => :post
         - else
-          = link_to "login", login_path
+          = link_to "Sign in", login_path
       <span class="pink">pinky</span>url
-    %h1 snapshot any website
+    %h1 Snapshot any website
     %p
       %label{:for => 'url'} URL
       %input{:name => 'url', :id => 'url', :type => 'text', :value => @example}
-      %input{:type => 'submit', :value => 'create'}
-      %a.options{:href => '#'} options
+      %input{:type => 'submit', :value => 'Create'}
+      %a.options{:href => '#'} Options
     %p.minor.options
       %label{:for => 'out-format'} format
       %select{:name => 'out-format', :id => 'out-format'}

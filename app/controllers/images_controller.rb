@@ -41,7 +41,7 @@ class ImagesController < ApplicationController
 
   private
     def check_key
-      raise SecurityError  unless @key = Key.from_param(params[:key])
+      raise SecurityError  unless @key = Key.find_by_value(params[:key])
     end
 
     def cache; @@cache ||= Cache.create end

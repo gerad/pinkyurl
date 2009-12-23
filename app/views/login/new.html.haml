@@ -1,0 +1,20 @@
+.box
+  %h2 Sign in
+  - form_for(@person_session, :url => login_path) do |f|
+    = f.error_messages
+    %p
+      = f.label :email
+      %br/
+      = f.text_field :email
+    %p
+      = f.label :password
+      %br/
+      = f.password_field :password
+    %p
+      = f.submit 'Sign in'
+      or
+      = link_to 'Join', new_person_path
+:javascript
+  $(document).ready(function() {
+    $('form :input:visible:first').select();
+  });

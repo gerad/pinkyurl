@@ -75,6 +75,9 @@ a
 p
   :margin 0px
 
+h1, h2, h3, h4, h5, h6
+  :margin 0px 0px 1ex
+
 .box
   +rounded(5px)
   +drop_shadow
@@ -103,8 +106,6 @@ body.index-index
       :margin-left 1ex
       &:first-child
         :margin-left 0px
-    h1, h6
-      :margin 0px 0px 1ex
     h6 .pink
       :color = !light_pink
     p.minor
@@ -156,5 +157,7 @@ body.index-index
           :line-height 1.6em
 
 // login
-body.login-new
+body.login-new, body.people-new
   :text-align left
+  p
+    :margin-top 0.5em

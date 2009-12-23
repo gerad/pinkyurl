@@ -1,0 +1,19 @@
+= f.error_messages
+
+%p
+  = f.label :email
+  %br/
+  = f.text_field :email
+%p
+  = f.label :password
+  %br/
+  = f.password_field :password
+%p
+  = f.label :password_confirmation, "Confirm password"
+  %br/
+  = f.password_field :password_confirmation
+
+:javascript
+  $(document).ready(function() {
+    $('form :input:visible:first').select();
+  });

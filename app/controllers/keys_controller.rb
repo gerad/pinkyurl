@@ -1,6 +1,6 @@
 class KeysController < ApplicationController
   def show
-    @key = Key.find_by_secret! params[:id]
+    @key = Key.from_param params[:id]
 
     respond_to do |format|
       format.html # show.html.erb

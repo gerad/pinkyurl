@@ -1,0 +1,6 @@
+.box
+  %p
+    Hi #{@person.email}
+    = link_to 'Edit', edit_person_path(@person)
+  - @person.keys.each do |k|
+    = link_to k.value, k

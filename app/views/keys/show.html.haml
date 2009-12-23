@@ -1,3 +1,6 @@
 .box
   This is key #{@key.value}. It belongs to
-  #{@key.person.try(:email) || 'nobody'}.
+  - if @key.person
+    = link_to @key.person.email, @key.person
+  - else
+    nobody

@@ -1,0 +1,6 @@
+.box
+  %h1 Join
+  - form_for(@person) do |f|
+    = render :partial => 'form', :locals => { :f => f }
+    %p
+      = f.submit 'Join'
