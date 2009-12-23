@@ -1,11 +1,11 @@
 class KeysController < ApplicationController
   def show
-    @key = Key.from_param params[:id]
+    @key = Key.find_by_secret! params[:id]
 
     respond_to do |format|
       format.html # show.html.erb
-      format.xml  { render :xml => @key.to_xml(:only => [:value, :images_left]) }
-      format.json { render :json => @key.to_json(:only => [:value, :images_left]) }
+      format.xml  { render :xml => @key }
+      format.json { render :json => @key }
     end
   end
 
