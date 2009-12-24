@@ -7,7 +7,7 @@ class LoginController < ApplicationController
     @person_session = PersonSession.new(params[:person_session])
     if @person_session.save
       flash[:notice] = "Login successful!"
-      redirect_back_or root_url
+      redirect_to person
     else
       render :action => :new
     end
