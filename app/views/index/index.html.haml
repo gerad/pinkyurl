@@ -34,7 +34,10 @@
       %p.minor
         %label{:for => 'key'} API key
         %input{:type => 'text', :id => 'key', :name => 'key', :value => @key.try(:value)}
-        %button{:id => 'claim'} claim
+        - if @key.try(:person)
+          = link_to 'Claimed', @key
+        - else
+          %button{:id => 'claim'} Claim
   #billing
     %h2 Pick a plan to claim your API key
     %table
@@ -151,7 +154,8 @@
         %td $48
       %tr
         %td
-        %td Free
+        %td
+          %button{ :id => 'free' } Free
         %td= render :partial => "checkout_form", :locals => { :price => '4.00' }
         %td= render :partial => "checkout_form", :locals => { :price => '12.00' }
         %td= render :partial => "checkout_form", :locals => { :price => '24.00' }
@@ -240,9 +244,15 @@
           var value = data.key.value;
           $('input#key').val(value);
           document.cookie = 'key=' + value + ';max-age=31557600';
+          $('#free').click(function() {
+            window.location = '/keys/' + data.key.secret;
+          });
           createImage('#i');
         }, 'json');
       } else {
+        $('#free').click(function() {
+          window.location = '/keys/#{@key.try(:secret)}';
+        });
         createImage(this);
       }
 

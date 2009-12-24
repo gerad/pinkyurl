@@ -41,7 +41,7 @@
 body, input, button, select, textarea
   :font #{!large} helvetica neue, helvetica, arial, sans-serif
   :color = !black
-  .minor, .minor input, .minor select
+  .minor, .minor input, .minor select, .minor button
     :font-size = !medium
 body
   :text-align center
@@ -141,7 +141,8 @@ body.index-index
   #billing
     :display none
     :font-size = !small
-    input[type=submit]
+    :margin-top 1em
+    input[type=submit], button
       :font-size = !medium
     table
       :table-layout fixed
