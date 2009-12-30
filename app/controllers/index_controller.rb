@@ -1,6 +1,5 @@
 class IndexController < ApplicationController
   def index
-    @example = 'http://' + %w/ google.com nytimes.com yahoo.com /.rand
     @merchant_id = GoogleCheckout[:merchant_id]
     @key =
       if cookies['key']
@@ -9,5 +8,6 @@ class IndexController < ApplicationController
         person.keys.first
       end
     @images = Image.all :limit => 30
+    @example = @images.rand.try(:url)
   end
 end
