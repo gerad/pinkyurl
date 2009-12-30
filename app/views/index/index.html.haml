@@ -272,6 +272,11 @@
       $('<img class="polaroid">')
         .attr('src', p)
         .css(css)
-        .appendTo(document.body);
+        .load(function() {
+          $(this)
+            .hide()
+            .appendTo(document.body)
+            .fadeIn('fast');
+        });
     });
   });
