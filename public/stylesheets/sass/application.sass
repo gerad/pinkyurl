@@ -46,8 +46,8 @@ body, input, button, select, textarea
 body
   :text-align center
   :background-color = !background
-  :background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
-  :overflow-y scroll
+  //:background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
+  :background url('/images/bg.jpg')
   :min-height 600px
 
 input[type=submit], button
@@ -83,7 +83,7 @@ h1, h2, h3, h4, h5, h6
   +drop_shadow
   +border
   :background-color = !form
-  :background -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.9)), to(rgba(255,255,255,0.7)))
+  :background -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.9)), to(rgba(255,255,255,0.8)))
   :padding 0.5em 1em 1em
   :text-shadow = !highlight 0px 1px 0px
   :margin 1em auto
@@ -91,6 +91,8 @@ h1, h2, h3, h4, h5, h6
 
 // index
 body.index-index
+  :overflow-y scroll
+  :overflow-x hidden
   .login
     :float right
     :font-size = !small
@@ -156,6 +158,12 @@ body.index-index
           :display none
           :padding 1ex
           :line-height 1.6em
+  img.polaroid
+    +drop_shadow
+    :position absolute
+    :z-index -1
+    :border solid 4px #fff
+    :border-bottom-width 20px
 
 // login
 body.login-new, body.people-new

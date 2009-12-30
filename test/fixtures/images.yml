@@ -1,0 +1,2 @@
+one:
+  url: http://localhost:3000/i?url=foo

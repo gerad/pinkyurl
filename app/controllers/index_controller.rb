@@ -8,5 +8,6 @@ class IndexController < ApplicationController
       elsif person
         person.keys.first
       end
+    @images = Image.all :limit => 30
   end
 end

@@ -1,17 +1,19 @@
 class ImagesController < ApplicationController
   before_filter :check_key
   around_filter :log_stats
+  after_filter :track_polaroids
+
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
   def create
     url = @stats[:url] = params[:url]
-    sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).hash.to_s)
     host = (URI.parse(url).host rescue nil)
     unless host && host != 'localhost'
       render :text => 'invalid url', :status => :unprocessable_entity
       return
     end
 
+    sha1_url = Digest::SHA1.hexdigest(url + params.values_at(*@@allowable).hash.to_s)
     resize = params[:resize]; resize = nil  if resize.blank?
     crop = params[:crop]; crop = nil  if crop.blank?
     file = Rails.root + "tmp/cache/#{resize || 'full'}-#{crop || 'uncropped'}/#{sha1_url}"
@@ -41,7 +43,9 @@ class ImagesController < ApplicationController
 
   private
     def check_key
-      raise SecurityError  unless @key = Key.find_by_value(params[:key])
+      unless self_referential? || @key = Key.find_by_value(params[:key])
+        raise SecurityError, "invalid key"
+      end
     end
 
     def cache; @@cache ||= Cache.create end
@@ -122,5 +126,17 @@ class ImagesController < ApplicationController
       ensure
         GreenSavant.log @stats
       end
+    end
+
+    def track_polaroids
+      if (200 .. 299).include?(response.status.to_i) && self_referential?
+        url = params[:url]
+        digest = Digest::SHA1.hexdigest url
+        Image.create :url => url, :digest => digest unless Image.find_by_digest(digest)
+      end
+    end
+
+    def self_referential?
+      request.url.starts_with? request.headers['Referer']
     end
 end

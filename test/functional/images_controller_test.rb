@@ -30,6 +30,12 @@ class ImagesControllerTest < ActionController::TestCase
     end
   end
 
+  test "self referer bypasses key" do
+    @request.env['HTTP_REFERER'] = @request.url
+    get :index, :url => 'http://google.com'
+    assert_response :ok
+  end
+
   test "crop" do
     get :index, :url => 'http://google.com', :crop => '50x50', :key => 'abc123'
     assert_response :ok
@@ -54,5 +60,21 @@ class ImagesControllerTest < ActionController::TestCase
     assert_equal(defaults.sort, @controller.send(:args, 'eofijout' => "'foo;").sort)
     assert_equal(defaults.sort, @controller.send(:args, 'max-wait' => 0).sort)
     assert_equal(defaults.sort, @controller.send(:args, 'user-styles' => 'file:///etc/passwd').sort)
+  end
+
+  test "keep track of polaroids" do
+    assert_difference 'Image.count' do
+      @request.env['HTTP_REFERER'] = @request.url
+      post :create, :url => 'http://google.com', :key => 'abc123'
+      assert_equal 'http://google.com', Image.last.url
+    end
+
+    assert_difference 'Image.count', 0 do
+      post :create, :url => 'http://google.com', :key => 'abc123'
+    end
+
+    assert_difference 'Image.count', 0 do
+      post :create, :url => 'blah', :key => 'abc123'
+    end
   end
 end
