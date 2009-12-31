@@ -39,7 +39,7 @@
   :border #{!color} solid 1px
 
 body, input, button, select, textarea
-  :font #{!large} helvetica neue, helvetica, arial, sans-serif
+  :font #{!large} good-kitty-1, good-kitty-2, sans-serif
   :color = !black
   .minor, .minor input, .minor select, .minor button
     :font-size = !medium
@@ -53,8 +53,8 @@ body
 input[type=submit], button
   +rounded
   +border(!link)
-  :padding-left 1ex
-  :padding-right 1ex
+  :padding-left 10px
+  :padding-right 10px
   :background-color = !link
   :background -webkit-gradient(linear, left top, left bottom, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
@@ -65,7 +65,7 @@ input[type=submit], button
 input[type=text], input[type=password], select, textarea
   +border
   +rounded
-  :padding 0.4ex
+  :padding 6px
   :background-color = !input
 
 a
@@ -76,7 +76,8 @@ p
   :margin 0px
 
 h1, h2, h3, h4, h5, h6
-  :margin 0px 0px 1ex
+  :font-family steinzeit-1, steinzeit-2, sans-serif
+  :margin 0px 0px 10px
 
 .box
   +rounded(5px)
@@ -97,22 +98,26 @@ body.index-index
   .login
     :float right
     :font-size = !small
+  h1
+    :font-size 72pt
   form
     input#url, input#file
-      :width 20ex
+      :width 400px
     input#resize, input#crop
-      :width 5ex
+      :width 50px
     input#key
-      :width 20ex
+      :width 200px
     label
       :cursor pointer
-      :margin-left 1ex
+      :margin-left 10px
       &:first-child
         :margin-left 0px
-    h6 .pink
-      :color = !light_pink
+    h6
+      :font-family good-kitty-1, good-kitty-2, sans-serif
+      .pink
+        :color = !light_pink
     p.minor
-      :margin-top 1ex
+      :margin-top 10px
     p.options, #info
       :display none
     #info
@@ -152,12 +157,12 @@ body.index-index
       :margin 0px auto
       :width 100%
       th:first-child
-        :width 24ex
+        :width 240px
       tr.explain
         :text-align left
         .explain
           :display none
-          :padding 1ex
+          :padding 10px
           :line-height 1.6em
   img.polaroid
     +drop_shadow
