@@ -1,15 +1,5 @@
 class PeopleController < ApplicationController
-  # GET /people
-  # GET /people.xml
-  def index
-    @people = Person.all
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.xml  { render :xml => @people }
-    end
-  end
-
+  before_filter :check_person, :except => [:new, :create]
   # GET /people/1
   # GET /people/1.xml
   def show
@@ -82,4 +72,9 @@ class PeopleController < ApplicationController
       format.xml  { head :ok }
     end
   end
+
+  private
+    def check_person
+      raise SecurityError, 'invalid credentials'  unless params[:id].nil? || Person.find(params[:id]) == person
+    end
 end
