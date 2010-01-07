@@ -7,7 +7,7 @@ class IndexController < ApplicationController
       elsif person
         person.keys.first
       end
-    @images = Image.all :limit => 30
+    @images = Image.all :limit => 15, :order => 'created_at DESC'
     @example = @images.rand.try(:url)
   end
 end
