@@ -77,11 +77,14 @@ module HoptoadNotifier
     # The url of the notifier library being used to send notifications
     attr_accessor :notifier_url
 
+    # The logger used by HoptoadNotifier
+    attr_accessor :logger
+
     DEFAULT_PARAMS_FILTERS = %w(password password_confirmation).freeze
 
     DEFAULT_BACKTRACE_FILTERS = [
       lambda { |line|
-        if defined?(HoptoadNotifier.configuration.project_root)
+        if defined?(HoptoadNotifier.configuration.project_root) && HoptoadNotifier.configuration.project_root.to_s != '' 
           line.gsub(/#{HoptoadNotifier.configuration.project_root}/, "[PROJECT_ROOT]")
         else
           line
@@ -103,10 +106,6 @@ module HoptoadNotifier
                       'ActionController::InvalidAuthenticityToken',
                       'CGI::Session::CookieStore::TamperedWithCookie',
                       'ActionController::UnknownAction']
-
-    # Some of these don't exist for Rails 1.2.*, so we have to consider that.
-    IGNORE_DEFAULT.map!{|e| eval(e) rescue nil }.compact!
-    IGNORE_DEFAULT.freeze
 
     alias_method :secure?, :secure
 
