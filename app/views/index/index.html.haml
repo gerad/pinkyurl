@@ -258,7 +258,10 @@
 
       return false;
     });
+  });
 
+  // wait until everything is fully loaded before bringing in more eye candy
+  $(window).load(function() {
     var polaroids = #{polaroids(@images).to_json};
     var w = $(window).width(), h = $(window).height();
     $.each(polaroids, function(i, p) {
