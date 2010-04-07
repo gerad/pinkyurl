@@ -10,6 +10,13 @@ class ApplicationController < ActionController::Base
 
   rescue_responses['SecurityError'] = :unauthorized
 
+  def login_required
+    unless person
+      redirect_to login_url(:return_to => request.request_uri)
+      return false
+    end
+  end
+
   def redirect_back_or path
     begin
       redirect_to :back

@@ -1,4 +1,6 @@
 class KeysController < ApplicationController
+  before_filter :login_required, :except => :create
+
   def show
     @key = Key.from_param params[:id]
 
