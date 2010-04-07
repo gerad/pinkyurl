@@ -125,7 +125,7 @@ class ImagesController < ApplicationController
           yield
         end
       ensure
-        GreenSavant.log @stats if @key
+        GreenSavant.log @stats if @key and not self_referential?
       end
     end
 
