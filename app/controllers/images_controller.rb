@@ -43,7 +43,8 @@ class ImagesController < ApplicationController
 
   private
     def check_key
-      unless self_referential? || @key = Key.find_by_value(params[:key])
+      @key = Key.find_by_value(params[:key])
+      unless self_referential? || @key
         raise SecurityError, "invalid key"
       end
     end
@@ -118,13 +119,13 @@ class ImagesController < ApplicationController
       @stats = {
         :access_at => Time.now,
         :referrer => request.referrer,
-        :api_key => params[:key] }
+        :api_key => @key.try(:secret) }
       begin
         @stats[:seconds] = Benchmark.realtime do
           yield
         end
       ensure
-        GreenSavant.log @stats
+        GreenSavant.log @stats if @key
       end
     end
 

@@ -171,6 +171,28 @@ body.index-index
     :border solid 4px #fff
     :border-bottom-width 20px
 
+body.keys-show
+  #log
+    .log-item
+      :text-align left
+      :clear both
+      :margin 20px auto
+      :width 700px
+      :height 100px
+      h3
+        :margin-bottom 0px
+        :overflow hidden
+        :text-overflow ellipsis
+        :white-space nowrap
+      img
+        :float left
+        :width 150
+        :height 100
+        +border
+        :margin-right 1em
+      .stats
+        :font-size= !small
+
 // login
 body.login-new, body.people-new
   :text-align left
