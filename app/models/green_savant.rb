@@ -30,6 +30,7 @@ class GreenSavant
           http.start do
             req = Net::HTTP::Post.new url.request_uri
             req.body = data.to_json
+            req.add_field 'Content-Type', 'application/json'
             res = http.request req
           end
         end
