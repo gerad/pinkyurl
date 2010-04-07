@@ -5,5 +5,26 @@
   - else
     nobody
 
+%h2 Recent Activity
+.log
+
 :coffee
-  alert "test"
+  logHtml: _.template '''
+    <div class="log-item">
+      <span class="date">{{access_at}}</span> &ndash;
+      Screenshot
+      of <a href="{{url}}" title="{{url}}">{{parseUri(url).host}}</a>
+      from <a href="{{referrer}}" title="{{referrer}}">{{parseUri(referrer).host}}</a>
+      took {{seconds.toFixed(3)}}s
+      {{ cache_hit ? ' (cache hit)' : '' }}
+    </div>
+    '''
+  $ ->
+    updateLog: ->
+      $.getJSON "#{GreenSavant.url}?api_key=#{@key.value}&callback=?", (log) ->
+        $('.log').html ''
+        log.map (logItem) ->
+          $('.log').prepend logHtml(logItem)
+        $('.date').prettyDate()
+    updateLog()
+    setInterval updateLog, 5000

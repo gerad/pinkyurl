@@ -6,11 +6,17 @@
     - if Rails.env.production?
       = javascript_include_tag 'http://code.jquery.com/jquery.min.js'
       = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js'
+      = javascript_include_tag 'underscore-min'
     - else
-      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js'
-    = javascript_include_tag 'http://use.typekit.com/hud2iio.js'
+      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js', 'underscore'
+    = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date'
     :javascript
       Typekit.load();
+      _.templateSettings = {
+        start       : '{{',
+        end         : '}}',
+        interpolate : /\{\{(.+?)\}\}/g
+      };
   %body{:class => "#{params[:controller]} #{params[:controller]}-#{params[:action]} #{@_first_render.path_without_format_and_extension.gsub('/', '-')}"}
     = yield
     - if Rails.env.production?
