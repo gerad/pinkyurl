@@ -22,9 +22,7 @@
   $ ->
     updateLog: ->
       $.getJSON "#{GreenSavant.url}?api_key=#{@key.value}&callback=?", (log) ->
-        $('.log').html ''
-        log.map (logItem) ->
-          $('.log').prepend logHtml(logItem)
+        $('.log').html log.map((logItem) -> logHtml(logItem)).join('')
         $('.date').prettyDate()
     updateLog()
     setInterval updateLog, 5000
