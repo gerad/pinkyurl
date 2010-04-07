@@ -35,7 +35,7 @@ if (typeof jQuery != "undefined") {
       var el = jQuery(this),
         originalDate = el.data('originalDate') || el.text(),
         date = prettyDate(originalDate);
-      console.log(originalDate);
+
       if (date) {
         el.text(date);
         el.data('originalDate', originalDate)
