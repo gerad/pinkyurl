@@ -138,6 +138,10 @@ class ImagesController < ApplicationController
     end
 
     def self_referential?
-      request.url.starts_with? request.headers['Referer']
+      same_host? request.url, request.headers['Referer']
+    end
+
+    def same_host? a, b
+      URI.parse(a).host == URI.parse(b).host rescue false
     end
 end
