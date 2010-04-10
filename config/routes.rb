@@ -1,6 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   map.resources :images, :as => 'i'
-  map.resources :keys
+  map.resources :keys, :member => [:claim]
   map.resources :people
 
   # The priority is based upon order of creation: first created -> highest priority.

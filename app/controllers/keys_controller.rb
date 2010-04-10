@@ -26,4 +26,15 @@ class KeysController < ApplicationController
       end
     end
   end
+
+  def claim
+    @key = Key.from_param params[:id]
+    if @key.person
+      raise SecurityError, 'attempt to claim an owned key' unless @key.person == person
+    else
+      @key.person = person
+      @key.save!
+    end
+    redirect_to @key
+  end
 end

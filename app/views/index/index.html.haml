@@ -245,13 +245,13 @@
           $('input#key').val(value);
           document.cookie = 'key=' + value + ';max-age=31557600';
           $('#free').click(function() {
-            window.location = '/keys/' + data.key.secret;
+            window.location = '/keys/' + data.key.secret + '/claim';
           });
           createImage('#i');
         }, 'json');
       } else {
         $('#free').click(function() {
-          window.location = '/keys/#{@key.try(:secret)}';
+          window.location = '/keys/#{@key.try(:secret)}/claim';
         });
         createImage(this);
       }
