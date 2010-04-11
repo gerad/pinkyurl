@@ -1,15 +1,15 @@
 --- 
 vendor/plugins/hoptoad_notifier: 
   squashed: true
-  branch: master
   url: git://github.com/thoughtbot/hoptoad_notifier.git
+  branch: master
   type: git
   revision: 991e95ca468c29ff9857d4f8b01914ea259e99d1
   remote: braid/vendor/plugins/hoptoad-notifier
 vendor/plugins/authlogic: 
   squashed: true
-  branch: master
   url: git://github.com/binarylogic/authlogic.git
+  branch: master
   type: git
   revision: f2e95179acf87f11b44c7a58e6083cf84cddff27
   remote: braid/vendor/plugins/authlogic
@@ -18,5 +18,5 @@ vendor/plugins/coffee-haml-filter:
   url: git://github.com/gerad/coffee-haml-filter.git
   branch: master
   type: git
-  revision: dc078a5b1265c020f66ed798b3f5df3df8cd20a9
+  revision: 2cd6cef46ca1a02d89edfb0e9de22257dc9dc71f
   remote: braid/vendor/plugins/coffee-haml-filter

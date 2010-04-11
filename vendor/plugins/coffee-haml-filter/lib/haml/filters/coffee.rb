@@ -8,7 +8,7 @@ module Haml::Filters::Coffee
       c.read
     end
     <<END
-<script type="#{options[:attr_wrapper]}text/javascript#{options[:attr_wrapper]}">
+<script type=#{options[:attr_wrapper]}text/javascript#{options[:attr_wrapper]}>
   //<![CDATA[
     #{js}
   //]]>
