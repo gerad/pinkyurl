@@ -13,3 +13,10 @@ vendor/plugins/authlogic:
   type: git
   revision: f2e95179acf87f11b44c7a58e6083cf84cddff27
   remote: braid/vendor/plugins/authlogic
+vendor/plugins/coffee-haml-filter: 
+  squashed: true
+  url: git://github.com/gerad/coffee-haml-filter.git
+  branch: master
+  type: git
+  revision: dc078a5b1265c020f66ed798b3f5df3df8cd20a9
+  remote: braid/vendor/plugins/coffee-haml-filter
