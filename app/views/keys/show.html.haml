@@ -20,7 +20,7 @@
       @referrer: logItem.referrer
       @has_referrer: @referrer.match /\w/
       @referrer_host: parseUri(logItem.referrer).host
-      @seconds: logItem.seconds
+      @seconds: logItem.seconds.toFixed(4)
       @cache_hit: logItem.cache_hit
 
   logTemplate: '''
