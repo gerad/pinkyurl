@@ -5,33 +5,46 @@
   - else
     nobody
 
-%h2 Recent Activity
-#log
+  %h2 Recent Activity
+  #log
 
 :coffee
-  logHtml: _.template '''
+  class LogView
+    constructor: (logItem) ->
+      @img: "/i?" + $.param({
+        url: logItem.url,
+        key: "#{@key.value}",
+        resize: 150, crop: "150x100" })
+      @url: logItem.url
+      @access_at: logItem.access_at
+      @referrer: logItem.referrer
+      @has_referrer: @referrer.match /\w/
+      @referrer_host: parseUri(logItem.referrer).host
+      @seconds: logItem.seconds
+      @cache_hit: logItem.cache_hit
+
+  logTemplate: '''
     <div class="log-item">
       <a href="{{img}}"><img src="{{img}}" /></a>
       <h3><a href="{{url}}" title="{{url}}">{{url}}</a></h3>
       <div class="stats">
         <span class="date">{{access_at}}</span> &ndash;
-        from <a href="{{referrer}}" title="{{referrer}}">{{parseUri(referrer).host}}</a> &ndash;
-        {{seconds.toFixed(3)}}s
-        {{ cache_hit ? ' (cache hit)' : '' }}
+        {{#has_referrer}}
+          from <a href="{{referrer}}" title="{{referrer}}">{{referrer_host}}</a> &ndash;
+        {{/has_referrer}}
+        {{seconds}}s
+        {{#cache_hit}}
+          (cache hit)
+        {{/cache_hit}}
       </div>
-    </div>
-    '''
+    </div>'''
+
   $ ->
     updateLog: ->
       $.getJSON "#{GreenSavant.url}?api_key=#{@key.secret}&callback=?", (log) ->
-        $('#log').html(log.map((logItem) ->
-          img: "/i?" + $.param({
-            url: logItem.url,
-            key: "#{@key.value}",
-            resize: 150, crop: "150x100" })
-          _.extend(logItem, {img: img})
-          logHtml(logItem)
-        ).join(''))
+        itemsHtml: log.map (logItem) ->
+          Mustache.to_html logTemplate, new LogView(logItem)
+        $('#log').html itemsHtml.join("\n")
         $('#log .date').prettyDate()
     updateLog()
     setInterval updateLog, 5000

@@ -9,14 +9,9 @@
       = javascript_include_tag 'underscore-min'
     - else
       = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js', 'underscore'
-    = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date'
+    = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date', 'mustache'
     :javascript
       Typekit.load();
-      _.templateSettings = {
-        start       : '{{',
-        end         : '}}',
-        interpolate : /\{\{(.+?)\}\}/g
-      };
   %body{:class => "#{params[:controller]} #{params[:controller]}-#{params[:action]} #{@_first_render.path_without_format_and_extension.gsub('/', '-')}"}
     = yield
     - if Rails.env.production?
