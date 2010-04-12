@@ -3,7 +3,7 @@
     %h6
       .login
         - if person
-          %span= person.email
+          %span= link_to person.email, person
           = link_to "Sign out", logout_path, :method => :post
         - else
           = link_to "Sign in", login_path
