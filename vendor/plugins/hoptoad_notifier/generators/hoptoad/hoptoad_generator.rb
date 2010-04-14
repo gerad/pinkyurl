@@ -11,10 +11,14 @@ class HoptoadGenerator < Rails::Generator::Base
       puts "Must pass --api-key or create config/initializers/hoptoad.rb"
       exit
     end
+    if plugin_is_present?
+      puts "You must first remove the hoptoad_notifier plugin. Please run: script/plugin remove hoptoad_notifier"
+      exit
+    end
     record do |m|
       m.directory 'lib/tasks'
       m.file 'hoptoad_notifier_tasks.rake', 'lib/tasks/hoptoad_notifier_tasks.rake'
-      if File.exists?('config/deploy.rb')
+      if ['config/deploy.rb', 'Capfile'].all? { |file| File.exists?(file) }
         m.append_to 'config/deploy.rb', capistrano_hook
       end
       if options[:api_key]
@@ -42,5 +46,9 @@ class HoptoadGenerator < Rails::Generator::Base
 
   def capistrano_hook
     IO.read(source_path('capistrano_hook.rb'))
+  end
+
+  def plugin_is_present?
+    File.exists?('vendor/plugins/hoptoad_notifier')
   end
 end

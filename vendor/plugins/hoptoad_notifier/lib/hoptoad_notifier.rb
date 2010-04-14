@@ -6,8 +6,10 @@ require 'hoptoad_notifier/version'
 require 'hoptoad_notifier/configuration'
 require 'hoptoad_notifier/notice'
 require 'hoptoad_notifier/sender'
-require 'hoptoad_notifier/catcher'
 require 'hoptoad_notifier/backtrace'
+require 'hoptoad_notifier/rack'
+
+require 'hoptoad_notifier/railtie' if defined?(Rails::Railtie)
 
 # Gem for applications to automatically post errors to the Hoptoad of their choice.
 module HoptoadNotifier
@@ -47,7 +49,7 @@ module HoptoadNotifier
     # Returns the Ruby version, Rails version, and current Rails environment
     def environment_info
       info = "[Ruby: #{RUBY_VERSION}]"
-      info << " [Rails: #{::Rails::VERSION::STRING}]" if defined?(Rails)
+      info << " [#{configuration.framework}]"
       info << " [Env: #{configuration.environment_name}]"
     end
 

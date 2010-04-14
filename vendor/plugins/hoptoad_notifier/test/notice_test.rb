@@ -143,7 +143,7 @@ class NoticeTest < Test::Unit::TestCase
   end
 
   should "use the caller as the backtrace for an exception without a backtrace" do
-    filters = HoptoadNotifier.configuration.backtrace_filters
+    filters = HoptoadNotifier::Configuration.new.backtrace_filters
     backtrace = HoptoadNotifier::Backtrace.parse(caller, :filters => filters)
     notice = build_notice(:exception => StandardError.new('error'), :backtrace => nil)
 
@@ -336,6 +336,47 @@ class NoticeTest < Test::Unit::TestCase
     assert_nothing_raised do
       build_notice(:session => { :object => stub(:to_hash => {}) })
     end
+  end
+
+  should "extract data from a rack environment hash" do
+    url = "https://subdomain.happylane.com:100/test/file.rb?var=value&var2=value2"
+    parameters = { 'var' => 'value', 'var2' => 'value2' }
+    env = Rack::MockRequest.env_for(url)
+
+    notice = build_notice(:rack_env => env)
+
+    assert_equal url, notice.url
+    assert_equal parameters, notice.parameters
+    assert_equal 'GET', notice.cgi_data['REQUEST_METHOD']
+  end
+
+  should "extract data from a rack environment hash with action_dispatch info" do
+    params = { 'controller' => 'users', 'action' => 'index', 'id' => '7' }
+    env = Rack::MockRequest.env_for('/', { 'action_dispatch.request.parameters' => params })
+
+    notice = build_notice(:rack_env => env)
+
+    assert_equal params, notice.parameters
+    assert_equal params['controller'], notice.component
+    assert_equal params['action'], notice.action
+  end
+
+  should "extract session data from a rack environment" do
+    session_data = { 'something' => 'some value' }
+    env = Rack::MockRequest.env_for('/', 'rack.session' => session_data)
+
+    notice = build_notice(:rack_env => env)
+
+    assert_equal session_data, notice.session_data
+  end
+
+  should "prefer passed session data to rack session data" do
+    session_data = { 'something' => 'some value' }
+    env = Rack::MockRequest.env_for('/')
+
+    notice = build_notice(:rack_env => env, :session_data => session_data)
+
+    assert_equal session_data, notice.session_data
   end
 
   def assert_accepts_exception_attribute(attribute, args = {}, &block)
