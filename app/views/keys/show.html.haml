@@ -5,6 +5,14 @@
   - else
     nobody
 
+  %h2 Usage Trend
+  %table#trend
+    %thead
+      %tr
+        %th Date
+        %th Requests
+    %tbody
+
   %h2 Recent Activity
   #log
 
@@ -39,7 +47,25 @@
       </div>
     </div>'''
 
+  dailyTemplate: '''
+    <tr>
+      <td>{{day}}</td>
+      <td>{{requests}}</td>
+    </tr>
+    '''
+
   $ ->
+    updateTrend: ->
+      $.getJSON "#{GreenSavant.url.to_s.sub('Log','Daily')}?api_key=#{@key.secret}&callback=?", (daily) ->
+        trendHtml: _(daily).chain().group((i) -> Date.parse(i.day)).map((g) ->
+          Mustache.to_html(dailyTemplate, {
+            day: g[0].day
+            requests: _(g).reduce(0, (sum, d) -> sum + d.requests)
+          })
+        ).value()
+        $('table#trend tbody').html trendHtml.join("\n")
+    updateTrend()
+
     updateLog: ->
       $.getJSON "#{GreenSavant.url}?api_key=#{@key.secret}&callback=?", (log) ->
         itemsHtml: log.map (logItem) ->
