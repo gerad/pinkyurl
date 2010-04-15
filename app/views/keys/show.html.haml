@@ -42,21 +42,16 @@
       </div>
     </div>'''
 
-  dailyTemplate: '''
-    <tr>
-      <td>{{day}}</td>
-      <td>{{requests}}</td>
-    </tr>
-    '''
-
   $ ->
     updateTrend: ->
       r: Raphael "trend"
       $.getJSON "#{GreenSavant.url.to_s.sub('Log','Daily')}?api_key=#{@key.secret}&callback=?", (daily) ->
-        trend: _(daily).group((i) -> Date.parse(i.day), (g) ->
-          { day: g[0].day,
-            requests: Math.sum(*g.pluck('requests')) })
-        $('#trend').html [trend.pluck('day').join(), trend.pluck('requests').join()].join("<br>")
+        trend: _(daily).group ((i) -> Date.parse(i.day)), ((g) ->
+          {
+            day: new Date(Date.parse(g[0].day)),
+            requests: _(g).reduce(0, (sum, d) -> sum + d.requests)
+          })
+        r.g.barchart(0, 0, 400, 100,  [_(trend).pluck('requests')]).label(_(trend).pluck('day'))
     updateTrend()
 
     updateLog: ->
