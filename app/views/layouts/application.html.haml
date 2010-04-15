@@ -12,20 +12,7 @@
     = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date', 'mustache'
     :javascript
       Typekit.load();
-    :coffee
-      _.mixin {
-        group: (list, byFn, agFn) ->
-          lastGroup: null
-          agFn ?= (i) -> i
-          _(list).chain().sortBy(byFn).reduce([], (groups, item) ->
-            group: byFn item
-            if _(groups).isEmpty() or not _(group).isEqual(lastGroup)
-              lastGroup: group
-              groups.push []
-            _(groups).last().push item
-            groups
-          ).map(agFn).value()
-      }
+    = coffee_script_bundle
   %body{:class => "#{params[:controller]} #{params[:controller]}-#{params[:action]} #{@_first_render.path_without_format_and_extension.gsub('/', '-')}"}
     = yield
     - if Rails.env.production?
