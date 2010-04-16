@@ -6,9 +6,9 @@
     - if Rails.env.production?
       = javascript_include_tag 'http://code.jquery.com/jquery.min.js'
       = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js'
-      = javascript_include_tag 'underscore-min', 'raphael-min', 'g.raphael-min', 'g.bar'
+      = javascript_include_tag 'underscore-min'
     - else
-      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js', 'underscore', 'raphael', 'g.raphael', 'g.bar'
+      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js', 'underscore'
     = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date', 'mustache'
     :javascript
       Typekit.load();
