@@ -2,19 +2,20 @@
 %html
   %head
     %title= 'pinkyurl'
+    = stylesheet_link_tag 'jquery.jqplot.min'
     = stylesheet_link_tag 'application', :media => 'all'
+    <!--[if IE]>
+    = javascript_include_tag 'excanvas.min.js'
+    <![endif]-->
     - if Rails.env.production?
       = javascript_include_tag 'http://code.jquery.com/jquery.min.js'
-      = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js'
+      = javascript_include_tag 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'
       = javascript_include_tag 'underscore-min'
-      = javascript_include_tag 'excanvas.min', 'jquery.jqplot.min'
-      = javascript_include_tag 'jqplot/jqplot.barRenderer.min', 'jqplot/jqplot.categoryAxisRenderer.min'
-      = stylesheet_link_tag 'jquery.jqplot.min'
+      = javascript_include_tag 'jquery.jqplot.min', 'jqplot/jqplot.barRenderer.min', 'jqplot/jqplot.categoryAxisRenderer.min'
     - else
-      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.7.2.js', 'underscore'
-      = javascript_include_tag 'excanvas', 'jquery.jqplot'
-      = javascript_include_tag 'jqplot/jqplot.barRenderer', 'jqplot/jqplot.categoryAxisRenderer'
-      = stylesheet_link_tag 'jquery.jqplot'
+      = javascript_include_tag 'jquery-1.4.js', 'jquery-ui-1.8.custom.js'
+      = javascript_include_tag 'underscore'
+      = javascript_include_tag 'jquery.jqplot', 'jqplot/jqplot.barRenderer', 'jqplot/jqplot.categoryAxisRenderer'
     = javascript_include_tag 'http://use.typekit.com/hud2iio.js', 'parseuri', 'pretty_date', 'mustache'
     :javascript
       Typekit.load();
