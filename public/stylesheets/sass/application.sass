@@ -28,18 +28,24 @@
 !medium = 18pt
 !small = 12pt
 
-
 =rounded(!width = 5px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
-=shadow(!alpha=0.3)
-  :-webkit-box-shadow 0px 5px 20px rgba(0, 0, 0, #{!alpha})
-  :-moz-box-shadow 0px 5px 20px rgba(0, 0, 0, #{!alpha})
+
+=shadow(!alpha=0.3, !x=0px, !y=5px)
+  :-webkit-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, #{!alpha})
+  :-moz-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, #{!alpha})
+
+=background_gradient(!from, !to)
+  :background-color = !from
+  :background -moz-linear-gradient(#{!from}, #{!to})
+  :background -webkit-gradient(linear, left top, left bottom, from(#{!from}), to(#{!to}))
+
 =border(!color = !border_color)
   :border #{!color} solid 1px
 
 body, input, button, select, textarea
-  +shadow(0.1)
+  +shadow(0.1, 0px, 1px)
   :font #{!large} good-kitty-1, good-kitty-2, sans-serif
   :color = !black
   .minor, .minor input, .minor select, .minor button
@@ -47,29 +53,27 @@ body, input, button, select, textarea
 body
   :text-align center
   :background-color = !background
-  //:background -webkit-gradient(radial, 50% 120, 40, 50% 200, 500, from(#{!background + #ccc}), to(#{!background}))
   :background url('/images/bg.jpg')
   :min-height 600px
 
 input[type=submit], button
   +rounded
   +border(!link)
+  +background_gradient(!link+#fff, !link)
   :border-color #{!link} #{!link + #444} #{!link + #444} #{!link}
   :padding-left 20px
   :padding-right 20px
-  :background-color = !link
-  :background -webkit-gradient(linear, left top, left bottom, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
-  :text-shadow #{!link} 0px -1px 0px
+  :text-shadow rgba(0, 0, 0, 0.2) 0px -1px 0px
   &:active
-    :background -webkit-gradient(linear, left bottom, left top, from(#{!link+#ccc}), to(#{!link}))
+    +background_gradient(!link, !link+#ccc)
 
 input[type=text], input[type=password], select, textarea
   +border
   +rounded
   :padding 6px
   :background-color = !input
-  :text-shadow #{!white} 0px 1px 0px
+  :text-shadow #{!highlight} 0px 1px 0px
 
 a
   :color = !link
