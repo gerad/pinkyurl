@@ -44,14 +44,16 @@
 
   $ ->
     updateTrend: ->
-      r: Raphael "trend"
+      width: $("#trend").width()
+      height: 200
+      r: Raphael "trend", width, height
       $.getJSON "#{GreenSavant.url.to_s.sub('Log','Daily')}?api_key=#{@key.secret}&callback=?", (daily) ->
         trend: _(daily).group ((i) -> Date.parse(i.day)), ((g) ->
           {
             day: new Date(Date.parse(g[0].day)),
             requests: _(g).reduce(0, (sum, d) -> sum + d.requests)
           })
-        r.g.barchart(0, 0, 400, 100,  [_(trend).pluck('requests')]).label(_(trend).pluck('day'))
+        r.g.barchart(0, 0, width, height,  [_(trend).pluck('requests')]).label(_(trend).pluck('day'))
     updateTrend()
 
     updateLog: ->
