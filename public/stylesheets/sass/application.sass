@@ -32,13 +32,14 @@
 =rounded(!width = 5px)
   :-webkit-border-radius = !width
   :-moz-border-radius = !width
-=drop_shadow
-  :-webkit-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
-  :-moz-box-shadow = 0px 5px 20px rgba(51, 51, 51, 0.3)
+=shadow(!alpha=0.3)
+  :-webkit-box-shadow 0px 5px 20px rgba(0, 0, 0, #{!alpha})
+  :-moz-box-shadow 0px 5px 20px rgba(0, 0, 0, #{!alpha})
 =border(!color = !border_color)
   :border #{!color} solid 1px
 
 body, input, button, select, textarea
+  +shadow(0.1)
   :font #{!large} good-kitty-1, good-kitty-2, sans-serif
   :color = !black
   .minor, .minor input, .minor select, .minor button
@@ -53,12 +54,13 @@ body
 input[type=submit], button
   +rounded
   +border(!link)
-  :padding-left 10px
-  :padding-right 10px
+  :border-color #{!link} #{!link + #444} #{!link + #444} #{!link}
+  :padding-left 20px
+  :padding-right 20px
   :background-color = !link
   :background -webkit-gradient(linear, left top, left bottom, from(#{!link+#fff}), to(#{!link}))
   :color = #eee
-  :text-shadow #{!border_color} 0px 1px 0px
+  :text-shadow #{!link} 0px -1px 0px
   &:active
     :background -webkit-gradient(linear, left bottom, left top, from(#{!link+#ccc}), to(#{!link}))
 
@@ -67,6 +69,7 @@ input[type=text], input[type=password], select, textarea
   +rounded
   :padding 6px
   :background-color = !input
+  :text-shadow #{!white} 0px 1px 0px
 
 a
   :color = !link
@@ -165,7 +168,7 @@ body.index-index
           :padding 10px
           :line-height 1.6em
   img.polaroid
-    +drop_shadow
+    +shadow
     :position absolute
     :z-index -1
     :border solid 4px #fff
