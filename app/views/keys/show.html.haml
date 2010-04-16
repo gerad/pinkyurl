@@ -42,16 +42,41 @@
       </div>
     </div>'''
 
+  plotTrend: (trend) ->
+    $.jqplot 'trend', [_.pluck(trend, 'requests')], {
+      seriesDefaults: {
+        renderer: $.jqplot.BarRenderer,
+        rendererOptions: { barPadding: 8, barMargin: 20 }
+      },
+      axes: {
+        xaxis: {
+          renderer:$.jqplot.CategoryAxisRenderer,
+          ticks: _.pluck(trend, 'day')
+        },
+        yaxis: { min: 0 }
+      }
+    }
+
   $ ->
     updateTrend: ->
       width: $("#trend").width()
       height: 200
       $.getJSON "#{GreenSavant.url.to_s.sub('Log','Daily')}?api_key=#{@key.secret}&callback=?", (daily) ->
-        trend: _(daily).group ((i) -> Date.parse(i.day)), ((g) ->
+        date: new Date()
+        monthZeros: _.map(_.range(31), ->
+          date.setDate(date.getDate() - 1)
           {
-            day: new Date(Date.parse(g[0].day)),
+            day: String(date),
+            requests: 0
+          })
+        trend: _(daily.concat(monthZeros)).group ((i) -> Date.parse(i.day)), ((g) ->
+          date: new Date(Date.parse(g[0].day))
+          dateStr: "${date.getMonth() + 1}/${date.getDate()}"
+          {
+            day: dateStr,
             requests: _(g).reduce(0, (sum, d) -> sum + d.requests)
           })
+        plotTrend(trend)
     updateTrend()
 
     updateLog: ->
