@@ -1,13 +1,13 @@
 .box
   %form{:action => '/i', :method => 'get', :id => 'i'}
-    %h6
+    %nav
       .login
         - if person
           %span= link_to person.email, person
           = link_to "Sign out", logout_path, :method => :post
         - else
           = link_to "Sign in", login_path
-      <span class="pink">pinky</span>url
+      <strong>pinky</strong>url
     %h1 Snapshot any website
     %p
       %label{:for => 'url'} URL

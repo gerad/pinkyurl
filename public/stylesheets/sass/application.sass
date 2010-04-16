@@ -1,16 +1,10 @@
 // http://kuler.adobe.com/#themeID/699303 - waterfall
 !black = #4A463F
-!navy = #396070
-!cyan = #7FA39D
-!tan = #BFBEB0
-!sand = #F2EADF
 
 // http://kuler.adobe.com/#themeID/699316 - mme la reine
 !pink = #E94B98
 !light_pink = #FF74C5
 !white = #FEF0FF
-!maroon = #652734
-!green = #D4FC9C
 
 !blue = #86BFCF
 
@@ -24,9 +18,10 @@
 !border_color = !black + #fff + #ccc
 
 // font sizes
-!large = 28pt
-!medium = 18pt
-!small = 12pt
+!x_large = 250%
+//!large = 200%
+!medium = xx-large
+!small = large
 
 =rounded(!width = 5px)
   :-webkit-border-radius = !width
@@ -46,10 +41,11 @@
 
 body, input, button, select, textarea
   +shadow(0.1, 0px, 1px)
-  :font #{!large} good-kitty-1, good-kitty-2, sans-serif
+  :font #{!medium} good-kitty-1, good-kitty-2, sans-serif
   :color = !black
-  .minor, .minor input, .minor select, .minor button
-    :font-size = !medium
+.minor, .minor input, .minor select, .minor button, .minor textarea
+  :font-size = !small
+
 body
   :text-align center
   :background-color = !background
@@ -84,7 +80,6 @@ p
 
 h1, h2, h3, h4, h5, h6
   :font-family steinzeit-1, steinzeit-2, sans-serif
-  :margin 0px 0px 10px
 
 .box
   +rounded(5px)
@@ -106,7 +101,8 @@ body.index-index
     :float right
     :font-size = !small
   h1
-    :font-size 72pt
+    :font-size = !x_large
+    :margin-top 0px
   form
     input#url, input#file
       :width 400px
@@ -119,16 +115,15 @@ body.index-index
       :margin-left 10px
       &:first-child
         :margin-left 0px
-    h6
-      :font-family good-kitty-1, good-kitty-2, sans-serif
-      .pink
+    nav
+      :margin-bottom 10px
+      strong
         :color = !light_pink
     p.minor
       :margin-top 10px
     p.options, #info
       :display none
     #info
-      :font-size = !medium
       hr
         :height 0px
         :border none
@@ -136,9 +131,8 @@ body.index-index
         :border-bottom #{!highlight} 1px solid
         :margin 1em 0px
       label
-        :line-height 1.8em
+        :line-height 2.3em
       textarea
-        :font-size = !medium
         :vertical-align top
         :width 80%
         :line-height 1.4em
@@ -157,8 +151,6 @@ body.index-index
     :display none
     :font-size = !small
     :margin-top 1em
-    input[type=submit], button
-      :font-size = !medium
     table
       :table-layout fixed
       :margin 0px auto
