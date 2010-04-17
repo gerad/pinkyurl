@@ -1,6 +1,6 @@
 .box
-  %h1 Join
+  %h1 Edit profile
   - form_for(@person) do |f|
     = render 'form', :f => f
     %p
-      = f.submit 'Join'
+      = f.submit 'Save'

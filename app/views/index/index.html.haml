@@ -156,10 +156,10 @@
         %td
         %td
           %button{ :id => 'free' } Free
-        %td= render :partial => "checkout_form", :locals => { :price => '4.00' }
-        %td= render :partial => "checkout_form", :locals => { :price => '12.00' }
-        %td= render :partial => "checkout_form", :locals => { :price => '24.00' }
-        %td= render :partial => "checkout_form", :locals => { :price => '48.00' }
+        %td= render "checkout_form", :price => '4.00'
+        %td= render "checkout_form", :price => '12.00'
+        %td= render "checkout_form", :price => '24.00'
+        %td= render "checkout_form", :price => '48.00'
         // %em Custom Stylesheet -
         // upload a custom style sheet to brand or format all images generated
         // for your API key. Coming soon.
