@@ -1,9 +1,9 @@
 .box
   This is key #{@key.value}. It belongs to
   - if @key.person
-    = link_to @key.person.email, @key.person
+    = link_to(@key.person.email, @key.person) + '.'
   - else
-    nobody
+    nobody.
 
   %h2 Usage Trend
   #trend
