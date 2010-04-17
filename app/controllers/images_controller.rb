@@ -6,6 +6,7 @@ class ImagesController < ApplicationController
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
   def create
+    params[:url] = 'http://' + params[:url]  unless params[:url] =~ %r'://'
     url = @stats[:url] = params[:url]
     host = (URI.parse(url).host rescue nil)
     unless host && host != 'localhost'
