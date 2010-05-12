@@ -38,169 +38,14 @@
           = link_to 'Claimed', @key
         - else
           %button{:id => 'claim'} Claim
-  #billing
-    %h2 Pick a plan to claim your API key
-    %table
-      %tr
-        %th
-        %th Free
-        %th Personal
-        %th Small
-        %th Medium
-        %th Large
-      %tr
-        %th
-          %a.explain{:href => '#'} Snapshots
-        %td 100
-        %td 1,000
-        %td 2,000
-        %td 6,000
-        %td 20,000
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            Number of snapshots that are encoded at the highest priority. High
-            priority snapshots generally take under 10 seconds to render. If
-            you go over your allotted number of high priority snapshots they
-            will be encoded at lower priority, which can take minutes to
-            finish.
-      %tr
-        %th
-          %a.explain{:href => '#'} Cache Size
-        %td 5,000
-        %td 10,000
-        %td 20,000
-        %td 60,000
-        %td 200,000
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            Cached images are served almost instantly, in most cases in well
-            under half a second.  There is no limit on the number of
-            impressions of images that are served from the cache.
-      %tr
-        %th
-          %a.explain{:href => '#'} Commercial Use
-        %td= image_tag('no.png')
-        %td= image_tag('no.png')
-        %td= image_tag('yes.png')
-        %td= image_tag('yes.png')
-        %td= image_tag('yes.png')
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            Free and personal plans cannot be used for commercial (for-profit)
-            projects.
-      /
-        %tr
-          %th
-            %a.explain{:href => '#'} SSL
-          %td= image_tag('no.png')
-          %td= image_tag('no.png')
-          %td= image_tag('yes.png')
-          %td= image_tag('yes.png')
-          %td= image_tag('yes.png')
-        %tr.explain
-          %td{ :colspan => 6 }
-            .explain
-              Whether Secure Sockets Layer (SSL) requests to images are allowed.
-              To make an SSL request, simply change the domain of your API call
-              to
-              = link_to "https://pinkyurl.com/"
-      %tr
-        %th
-          %a.explain{:href => '#'} Referrer/Domain Limiting
-        %td= image_tag('no.png')
-        %td= image_tag('yes.png')
-        %td= image_tag('yes.png')
-        %td= image_tag('yes.png')
-        %td= image_tag('yes.png')
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            Make sure that nobody can use your API key but you.  Limit the
-            referrers that are allowed to create images with your API key.
-      %tr
-        %th
-          %a.explain{:href => '#'} Usage Stats
-        %td
-          = image_tag('public.png')
-          Public
-        %td
-          = image_tag('private.png')
-          Private
-        %td
-          = image_tag('private.png')
-          Private
-        %td
-          = image_tag('private.png')
-          Private
-        %td
-          = image_tag('private.png')
-          Private
-      %tr.explain
-        %td{ :colspan => 6 }
-          .explain
-            See statistics about your usage.  How many encodes, how many cache
-            hits, top referrers, recently viewed snapshots, most viewed
-            snapshots.  These statistics are kept private for paid plans, but
-            may be made publicly available for unpaid plans.
-      %tr.price
-        %th Price
-        %td $0
-        %td $4
-        %td $12
-        %td $24
-        %td $48
-      %tr
-        %td
-        %td
-          %button{ :id => 'free' } Free
-        %td= render "checkout_form", :price => '4.00'
-        %td= render "checkout_form", :price => '12.00'
-        %td= render "checkout_form", :price => '24.00'
-        %td= render "checkout_form", :price => '48.00'
-        // %em Custom Stylesheet -
-        // upload a custom style sheet to brand or format all images generated
-        // for your API key. Coming soon.
+
 :javascript
   $(document).ready(function() {
-    function setupForms(secret) {
-      var url = window.location.protocol + '//' + window.location.host +
-        '/keys/' + secret + '/claim';
-      $('#free').click(function() {
-        window.location = url;
-        return false;
-      });
-      $('#billing form').submit(function() {
-        var $this = $(this),
-          inputs = { key: secret, url: url,
-            description: ['Thanks for your purchase! &lt;a href=\'', url
-              , '\'&gt;Return to pinkyurl&lt;/a&gt; to claim your API key.'].join('') };
-        for (var i in inputs)
-          $(['<input'
-            , ' type="hidden"'
-            , ' name="shopping-cart.items.item-1.digital-content.', i, '"'
-            , ' value="', inputs[i], '" />'].join('')).appendTo($this);
-      });
-    }
-
     var loading = $('<img class="loading" src="/images/loading.gif" />')
       .css('opacity', 0);
 
     $('a.options').click(function() {
       $('p.options').toggle('fast');
-      return false;
-    });
-
-    $('#claim').click(function() {
-      $('#billing').slideToggle('fast');
-      return false;
-    });
-
-    $('a.explain').click(function() {
-      $(this).closest('tr').next('tr.explain').find('.explain')
-        .slideToggle('fast');
       return false;
     });
 
@@ -264,11 +109,9 @@
           var value = data.key.value;
           $('input#key').val(value);
           document.cookie = 'key=' + value + ';max-age=31557600';
-          setupForms(data.key.secret);
           createImage('#i');
         }, 'json');
       } else {
-        setupForms('#{@key.try(:secret)}');
         createImage(this);
       }
 

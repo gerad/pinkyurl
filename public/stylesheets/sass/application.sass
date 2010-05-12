@@ -147,22 +147,6 @@ body.index-index
     :border-color = !form
     +rounded(5px)
     :-webkit-box-reflect below 5px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(0.8, transparent), to(rgba(255,255,255,0.3)))
-  #billing
-    :display none
-    :font-size = !small
-    :margin-top 1em
-    table
-      :table-layout fixed
-      :margin 0px auto
-      :width 100%
-      th:first-child
-        :width 240px
-      tr.explain
-        :text-align left
-        .explain
-          :display none
-          :padding 10px
-          :line-height 1.6em
   img.polaroid
     +shadow
     :position absolute
@@ -201,3 +185,20 @@ body.login-new, body.people-new, body.people-edit
   :text-align left
   p
     :margin-top 0.5em
+
+body.index-pricing
+  #pricing
+    :font-size = !small
+    :margin-top 1em
+    table
+      :table-layout fixed
+      :margin 0px auto
+      :width 100%
+      th:first-child
+        :width 240px
+      tr.explain
+        :text-align left
+        .explain
+          :display none
+          :padding 10px
+          :line-height 1.6em
