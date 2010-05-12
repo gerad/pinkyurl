@@ -165,6 +165,26 @@
         // for your API key. Coming soon.
 :javascript
   $(document).ready(function() {
+    function setupForms(secret) {
+      var url = window.location.protocol + '//' + window.location.host +
+        '/keys/' + secret + '/claim';
+      $('#free').click(function() {
+        window.location = url;
+        return false;
+      });
+      $('#billing form').submit(function() {
+        var $this = $(this),
+          inputs = { key: secret, url: url,
+            description: ['Thanks for your purchase! &lt;a href=\'', url
+              , '\'&gt;Return to pinkyurl&lt;/a&gt; to claim your API key.'].join('') };
+        for (var i in inputs)
+          $(['<input'
+            , ' type="hidden"'
+            , ' name="shopping-cart.items.item-1.digital-content.', i, '"'
+            , ' value="', inputs[i], '" />'].join('')).appendTo($this);
+      });
+    }
+
     var loading = $('<img class="loading" src="/images/loading.gif" />')
       .css('opacity', 0);
 
@@ -244,15 +264,11 @@
           var value = data.key.value;
           $('input#key').val(value);
           document.cookie = 'key=' + value + ';max-age=31557600';
-          $('#free').click(function() {
-            window.location = '/keys/' + data.key.secret + '/claim';
-          });
+          setupForms(data.key.secret);
           createImage('#i');
         }, 'json');
       } else {
-        $('#free').click(function() {
-          window.location = '/keys/#{@key.try(:secret)}/claim';
-        });
+        setupForms('#{@key.try(:secret)}');
         createImage(this);
       }
 
