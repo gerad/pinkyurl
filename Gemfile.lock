@@ -44,9 +44,17 @@ dependencies:
     version: ">= 0"
     require: 
     - aws/s3
+  RubyInline: 
+    group: 
+    - :default
+    version: ">= 0"
 specs: 
 - rake: 
     version: 0.8.7
+- ZenTest: 
+    version: 4.3.1
+- RubyInline: 
+    version: 3.8.4
 - activesupport: 
     version: 2.3.5
 - rack: 
@@ -82,12 +90,12 @@ specs:
 - mysql: 
     version: 2.8.1
 - newrelic_rpm: 
-    version: 2.11.2
+    version: 2.11.3
 - rails: 
     version: 2.3.5
 - system_timer: 
     version: "1.0"
-hash: 27af6a62e3fe8946972434bdffed6c2207a0ea67
+hash: d4e17fd656a662c32fbca0efaff01fa6cb409d4a
 sources: 
 - Rubygems: 
     uri: http://gemcutter.org
