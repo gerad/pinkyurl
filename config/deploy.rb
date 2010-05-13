@@ -28,4 +28,12 @@ namespace :deploy do
   end
 end
 
+namespace :bundle do
+  desc "Check gem dependencies"
+  task :install do
+    run "cd #{release_path} && bundle install"
+  end
+end
+
 after 'deploy:finalize_update', 'deploy:finalize_update_more'
+after "deploy:update_code", "bundle:install"
