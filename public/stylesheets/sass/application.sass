@@ -28,8 +28,8 @@
   :-moz-border-radius = !width
 
 =shadow(!alpha=0.3, !x=0px, !y=5px)
-  :-webkit-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, #{!alpha})
-  :-moz-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, #{!alpha})
+  :-webkit-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, !alpha)
+  :-moz-box-shadow #{!x} #{!y} 20px rgba(0, 0, 0, !alpha)
 
 =background_gradient(!from, !to)
   :background-color = !from
@@ -55,8 +55,8 @@ body
 input[type=submit], button
   +rounded
   +border(!link)
-  +background_gradient(!link+#fff, !link)
-  :border-color #{!link} #{!link + #444} #{!link + #444} #{!link}
+  +background_gradient(!link+#222, !link)
+  :border-color #{!link} #{!link - #222} #{!link - #222} #{!link}
   :padding-left 20px
   :padding-right 20px
   :color = #eee
