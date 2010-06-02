@@ -34,6 +34,10 @@ dependencies:
     group: 
     - :default
     version: ">= 0"
+  bundler: 
+    group: 
+    - :default
+    version: ">= 0"
   base32: 
     group: 
     - :default
@@ -81,6 +85,8 @@ specs:
     version: 1.0.1
 - bistro_car: 
     version: 0.2.2
+- bundler: 
+    version: 0.9.25
 - haml: 
     version: 3.0.9
 - image_science: 
@@ -95,7 +101,7 @@ specs:
     version: 2.3.8
 - system_timer: 
     version: "1.0"
-hash: d33a0ce6c43760e654944887c1520a750c8d5b3b
+hash: d762380d719e472812361dfe6a869132dfc36c81
 sources: 
 - Rubygems: 
     uri: http://gemcutter.org
