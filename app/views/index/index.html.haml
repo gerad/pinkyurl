@@ -104,16 +104,7 @@
           });
       };
 
-      if (!$('input#key').val()) {
-        $.post('/keys.json', null, function(data, status) {
-          var value = data.key.value;
-          $('input#key').val(value);
-          document.cookie = 'key=' + value + ';max-age=31557600';
-          createImage('#i');
-        }, 'json');
-      } else {
-        createImage(this);
-      }
+      createImage(this);
 
       return false;
     });
