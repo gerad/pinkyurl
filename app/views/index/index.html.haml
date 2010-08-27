@@ -118,27 +118,3 @@
       return false;
     });
   });
-
-  // wait until everything is fully loaded before bringing in more eye candy
-  $(window).load(function() {
-    var polaroids = #{polaroids(@images).to_json};
-    var w = $(window).width(), h = $(window).height();
-    $.each(polaroids, function(i, p) {
-      var rotation = 'rotate(' + ((Math.random() * 90)-45) + 'deg)';
-      var css = {
-        left: (Math.random() * w) + 'px',
-        top: (Math.random() * h/2) - 20 + 'px',
-        '-webkit-transform': rotation,
-        '-moz-transform': rotation
-      };
-      $('<img class="polaroid">')
-        .attr('src', p)
-        .css(css)
-        .load(function() {
-          $(this)
-            .hide()
-            .appendTo(document.body)
-            .show('puff');
-        });
-    });
-  });

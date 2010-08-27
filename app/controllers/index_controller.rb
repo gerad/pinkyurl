@@ -1,8 +1,5 @@
 class IndexController < ApplicationController
   def index
-    @key = get_key
-    @images = Image.all :limit => 15, :order => 'created_at DESC'
-    @example = @images.rand.try(:url)
   end
 
   def pricing

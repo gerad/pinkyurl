@@ -1,7 +1,7 @@
 class ImagesController < ApplicationController
-  before_filter :check_key
+  #before_filter :check_key
   around_filter :log_stats
-  after_filter :track_polaroids
+  #after_filter :track_polaroids
 
   @@allowable = Set.new(%w/ url out out-format min-width delay /)
 
