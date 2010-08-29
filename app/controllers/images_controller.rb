@@ -1,3 +1,5 @@
+require 'timeout'
+
 class ImagesController < ApplicationController
   #before_filter :check_key
   around_filter :log_stats
@@ -62,13 +64,33 @@ class ImagesController < ApplicationController
           "--max-wait=5000" ]
     end
 
+    def system_with_timeout(timeout, *args)
+     if ( (pid = fork) == nil )
+       #child process
+       Rails.logger.debug(args.join(' '))
+       exec(*args)
+     else
+       success = false
+       #parent process
+       begin
+         #TODO if the process fails return false
+         success = Timeout::timeout(timeout){ Process.waitpid(pid) }
+       rescue Timeout::Error
+         Rails.logger.error "***** Timeout error"
+         Process.kill("HUP", pid)
+         Process.detach(pid)
+       end
+       success
+     end
+    end
+
     def cutycapt opt = {}
       # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
       opt['url'] = Rack::Utils.unescape opt['url']
       if ENV['DISPLAY']
-        system 'CutyCapt', *args(opt)
+        system_with_timeout 5, 'CutyCapt', *args(opt)
       else
-        system 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
+        system_with_timeout 5, 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
       end
     end
 
