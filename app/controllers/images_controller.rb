@@ -88,9 +88,9 @@ class ImagesController < ApplicationController
       # Qt expects no %-escaping (http://doc.trolltech.com/4.5/qurl.html#QUrl)
       opt['url'] = Rack::Utils.unescape opt['url']
       if ENV['DISPLAY']
-        system_with_timeout 5, 'CutyCapt', *args(opt)
+        system_with_timeout 8, 'CutyCapt', *args(opt)
       else
-        system_with_timeout 5, 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
+        system_with_timeout 8, 'xvfb-run', '-a', '--server-args="-screen 0, 1024x768x24"', 'CutyCapt', *args(opt)
       end
     end
 
