@@ -30,7 +30,7 @@ class ImagesController < ApplicationController
     end
 
     full = Rails.root + "tmp/cache/full-uncropped/#{sha1_url}"
-    cutycapt_with_cache(params.merge('out' => full), params[:expire])
+    cutycapt_with_cache(params.merge('out' => full), params[:expire], params[:only_cache])
 
     if (resize || crop) && (!File.exists?(file) || params[:expire])
       FileUtils.mkdir_p File.dirname(file)
@@ -94,13 +94,15 @@ class ImagesController < ApplicationController
       end
     end
 
-    def cutycapt_with_cache opt = {}, force=nil
+    def cutycapt_with_cache opt = {}, force=nil, only_cache=nil
       file = opt['out']
       if force || !File.exists?(file)
         FileUtils.mkdir_p File.dirname(file)
         key = cache.key "cutycapt-#{file}"
         if !force && cached = cache.memcache.get(key)
           File.open file, 'w' do |f| f.write cached end
+        elsif only_cache
+          raise ActiveRecord::RecordNotFound
         else
           cutycapt(opt)  or raise "CutyCapt exit status #{$?.exitstatus}"
           cache.memcache.set key, File.read(file) if File.size(file) < 1.megabyte
