@@ -30,7 +30,7 @@ class ImagesController < ApplicationController
     end
 
     full = Rails.root + "tmp/cache/full-uncropped/#{sha1_url}"
-    cutycapt_with_cache(params.merge('out' => full), params[:expire], params[:only_cache])
+    cutycapt_with_cache(params.merge('out' => full), params[:expire], params['only-cache'])
 
     if (resize || crop) && (!File.exists?(file) || params[:expire])
       FileUtils.mkdir_p File.dirname(file)
