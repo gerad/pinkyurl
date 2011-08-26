@@ -8,8 +8,8 @@ set :deploy_via, :remote_cache
 set :user, "app"
 set :use_sudo, false
 
-role :app, "pinkyurl.com"
-role :db, "pinkyurl.com", :primary => true
+role :app, "173.255.194.119"
+role :db, "173.255.194.119", :primary => true
 
 namespace :deploy do
   task :restart, :roles => :app, :except => { :no_release => true } do
