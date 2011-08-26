@@ -1,4 +1,4 @@
-source :gemcutter
+source :rubygems
 
 gem 'aws-s3', :require => 'aws/s3'
 gem 'base32'
@@ -12,3 +12,7 @@ gem 'sqlite3-ruby'
 gem 'newrelic_rpm'
 gem 'rails', '~>2'
 gem 'system_timer'
+
+group :development do
+  gem 'capistrano'
+end

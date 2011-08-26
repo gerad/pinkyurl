@@ -22,11 +22,25 @@ GEM
     bistro_car (0.2.2)
       jsmin (>= 1.0.1)
     builder (2.1.2)
+    capistrano (2.8.0)
+      highline
+      net-scp (>= 1.0.0)
+      net-sftp (>= 2.0.0)
+      net-ssh (>= 2.0.14)
+      net-ssh-gateway (>= 1.1.0)
     haml (3.0.17)
+    highline (1.6.2)
     image_science (1.2.1)
     jsmin (1.0.1)
     memcache-client (1.8.5)
     mime-types (1.16)
+    net-scp (1.0.4)
+      net-ssh (>= 1.99.1)
+    net-sftp (2.0.5)
+      net-ssh (>= 2.0.9)
+    net-ssh (2.2.1)
+    net-ssh-gateway (1.1.0)
+      net-ssh (>= 1.99.1)
     newrelic_rpm (2.12.3)
     rack (1.1.0)
     rails (2.3.8)
@@ -50,6 +64,7 @@ DEPENDENCIES
   base32
   bistro_car
   bundler
+  capistrano
   haml
   image_science
   memcache-client
