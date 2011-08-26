@@ -3,6 +3,7 @@ require 'bundler/capistrano'
 set :application, "pinkyurl"
 set :scm, "git"
 set :repository, "git://github.com/gerad/pinkyurl.git"
+set :branch, "nko"
 set :deploy_via, :remote_cache
 
 set :user, "app"
